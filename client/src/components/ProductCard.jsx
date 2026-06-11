@@ -29,68 +29,70 @@ const ProductCard = ({ product, isFeatured }) => {
       navigate("/cart");
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
-      console.error(error);
     }
   };
 
   return (
     <motion.div
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-      className={`card h-100 shadow-sm border-0 product-card ${
-        isFeatured ? "featured-card" : ""
-      }`}
+      whileHover={{
+        scale: 1.04,
+        boxShadow: "0px 0px 25px rgba(212,175,55,0.4)",
+      }}
+      whileTap={{ scale: 0.98 }}
+      className="relative overflow-hidden rounded-[1.5rem] border border-amber-300/20 bg-slate-950 text-slate-100 shadow-xl transition hover:-translate-y-1"
+      style={{ background: "linear-gradient(145deg, #0d0d0d, #1a1a1a)" }}
     >
-      <div className="position-relative overflow-hidden">
-        {/* Image link to ProductDetails */}
+      <div className="relative">
         <Link to={`/product/${product._id}`}>
           <img
             src={`http://localhost:5000${product.image}`}
-            className="card-img-top"
             alt={product.name}
+            className="w-full"
             style={{
-              height: isFeatured ? "250px" : "200px",
+              height: isFeatured ? "260px" : "220px",
               objectFit: "cover",
             }}
           />
         </Link>
 
-        <span className="badge bg-success position-absolute top-0 end-0 m-2">
+        <span className="absolute left-4 top-4 rounded-full bg-amber-300 px-3 py-1 text-sm font-semibold text-slate-950">
           ₹{product.price}
         </span>
 
         {product.isNew && (
-          <span className="badge bg-danger position-absolute top-0 start-0 m-2">
-            New
+          <span className="absolute right-4 top-4 rounded-full bg-emerald-500 px-2 py-1 text-xs font-semibold text-white">
+            NEW
           </span>
         )}
+
         {product.onSale && (
-          <span className="badge bg-warning text-dark position-absolute top-0 start-0 m-2">
-            Sale
+          <span className="absolute right-4 top-12 rounded-full bg-yellow-300 px-2 py-1 text-xs font-semibold text-slate-950">
+            SALE
           </span>
         )}
       </div>
 
-      <div className="card-body d-flex flex-column">
-        {/* Name link to ProductDetails */}
-        <Link
-          to={`/product/${product._id}`}
-          style={{ textDecoration: "none", color: "inherit" }}
-        >
-          <h5 className="card-title text-truncate" title={product.name}>
+      <div className="flex flex-col gap-3 p-4">
+        <Link to={`/product/${product._id}`} className="outline-none focus-visible:ring-2 focus-visible:ring-amber-300">
+          <h5
+            className="overflow-hidden text-ellipsis whitespace-nowrap text-lg font-semibold text-amber-300"
+            title={product.name}
+          >
             {product.name}
           </h5>
         </Link>
 
-        <p className="card-text text-muted" style={{ flexGrow: 1 }}>
-          {product.description
-            ? product.description.substring(0, 60) + "..."
-            : ""}
+        <p className="min-h-[3rem] text-sm leading-6 text-slate-400">
+          {product.description ? `${product.description.substring(0, 70)}...` : ""}
         </p>
 
-        {/* <button className="btn btn-primary mt-auto" onClick={handleAddToCart}>
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          className="mt-2 rounded-3xl bg-amber-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-200"
+        >
           Add to Cart
-        </button> */}
+        </button>
       </div>
     </motion.div>
   );

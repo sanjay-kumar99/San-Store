@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
-import axios from "../api/axios"; // your axios instance
+import { useState } from "react";
+import axios from "../api/axios";
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
 
@@ -18,10 +18,9 @@ function Register() {
     const errs = {};
     if (!form.name.trim()) errs.name = "Name is required";
     if (!form.email.trim()) errs.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email = "Email is invalid";
-    if (!form.password) errs.password = "Password is required";
-    else if (form.password.length < 6)
-      errs.password = "Password must be at least 6 characters";
+    else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email = "Invalid email";
+    if (!form.password || form.password.length < 6)
+      errs.password = "Min 6 characters required";
     if (form.confirmPassword !== form.password)
       errs.confirmPassword = "Passwords do not match";
     return errs;
@@ -38,72 +37,61 @@ function Register() {
     if (Object.keys(validationErrors).length > 0) return;
 
     try {
-      const { data } = await axios.post("/auth/register", {
-        name: form.name,
-        email: form.email,
-        password: form.password,
-      });
+      const { data } = await axios.post("/auth/register", form);
 
       Swal.fire({
         icon: "success",
-        title: "Registration Successful",
-        text: `Welcome, ${data.name}!`,
+        title: "Welcome to SanC@rt ✨",
+        text: `Hi ${data.name}, account created successfully!`,
       });
 
       setForm({ name: "", email: "", password: "", confirmPassword: "" });
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Registration Failed",
-        text:
-          error.response?.data?.message ||
-          "Something went wrong. Please try again later.",
-      });
+      Swal.fire("Error", error.response?.data?.message || "Failed", "error");
     }
   };
 
   return (
-    <div className="register-container">
+    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4 text-slate-100">
       <motion.div
-        className="register-card"
-        initial={{ opacity: 0, y: -50 }}
+        className="w-full max-w-md rounded-[2rem] border border-amber-400/20 bg-slate-900/95 p-8 shadow-2xl shadow-slate-950/40"
+        initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
       >
-        <h2 className="text-center mb-4">Register</h2>
-        <form onSubmit={handleSubmit} noValidate>
+        <h2 className="text-center text-3xl font-semibold text-amber-300 mb-6">
+          Create Account
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
           {["name", "email", "password", "confirmPassword"].map((field) => (
-            <motion.div
-              key={field}
-              className="form-group mb-3"
-              whileFocus={{ scale: 1.02 }}
-            >
-              <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+            <div key={field}>
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                {field.toUpperCase()}
+              </label>
               <input
                 type={field.includes("password") ? "password" : "text"}
-                className={`form-control ${errors[field] ? "is-invalid" : ""}`}
                 name={field}
                 value={form[field]}
                 onChange={handleChange}
+                className="w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
               />
               {errors[field] && (
-                <div className="invalid-feedback">{errors[field]}</div>
+                <p className="mt-2 text-sm text-rose-400">{errors[field]}</p>
               )}
-            </motion.div>
+            </div>
           ))}
 
-          <motion.button
+          <button
             type="submit"
-            className="btn btn-primary w-100 mt-2"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="w-full rounded-3xl bg-amber-300 px-6 py-3 text-base font-semibold text-slate-950 transition hover:bg-amber-200"
           >
             Register
-          </motion.button>
+          </button>
         </form>
-        <p className="text-center mt-3">
+
+        <p className="mt-6 text-center text-slate-400">
           Already have an account?{" "}
-          <a href="/login" style={{ color: "#667eea" }}>
+          <a href="/login" className="text-amber-300 hover:text-amber-200">
             Login
           </a>
         </p>

@@ -1,8 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CartContext } from "../context/CartContext";
-import { Spinner, Button, Form } from "react-bootstrap";
 import Swal from "sweetalert2";
 
 const ProductDetails = () => {
@@ -23,18 +23,18 @@ const ProductDetails = () => {
         setLoading(true);
 
         const { data: productData } = await axios.get(
-          `http://localhost:5000/api/products/${id}`
+          `http://localhost:5000/api/products/${id}`,
         );
         setProduct(productData);
 
         if (token) {
           const { data: cartData } = await axios.get(
             "http://localhost:5000/api/cart",
-            { headers: { Authorization: `Bearer ${token}` } }
+            { headers: { Authorization: `Bearer ${token}` } },
           );
 
           const existingItem = cartData.find(
-            (item) => item.productId._id === productData._id
+            (item) => item.productId._id === productData._id,
           );
 
           if (existingItem) {
@@ -43,7 +43,6 @@ const ProductDetails = () => {
           }
         }
       } catch (error) {
-        console.error(error);
         Swal.fire("Error", "Failed to load product", "error");
       } finally {
         setLoading(false);
@@ -55,11 +54,7 @@ const ProductDetails = () => {
 
   const handleAddToCart = async () => {
     if (!token) {
-      Swal.fire(
-        "Login Required",
-        "Please login to add items to cart",
-        "warning"
-      );
+      Swal.fire("Login Required", "Please login first", "warning");
       navigate("/login");
       return;
     }
@@ -69,14 +64,14 @@ const ProductDetails = () => {
         await axios.put(
           `http://localhost:5000/api/cart/${cartItemId}`,
           { quantity },
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
         Swal.fire("Updated", "Cart updated successfully", "success");
       } else {
         const { data } = await axios.post(
           "http://localhost:5000/api/cart",
           { productId: product._id, quantity },
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
         setCartItemId(data._id);
         Swal.fire("Added", "Product added to cart", "success");
@@ -84,79 +79,85 @@ const ProductDetails = () => {
 
       fetchCartCount();
     } catch (error) {
-      console.error(error);
-      Swal.fire("Error", "Failed to add/update cart", "error");
+      Swal.fire("Error", "Something went wrong", "error");
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="text-center my-5">
-        <Spinner animation="border" variant="primary" />
+      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-amber-300">
+        Loading...
       </div>
     );
+  }
 
-  if (!product) return <p className="text-center my-5">Product not found</p>;
+  if (!product) {
+    return (
+      <div className="text-center text-amber-300 my-20">Product not found</div>
+    );
+  }
 
   return (
-    <div className="container my-5 py-5">
-      <div className="row g-4">
-        {/* Left: Product Image */}
-        <div className="col-md-6 text-center">
-          <div className="position-relative overflow-hidden product-image-container">
-            <img
-              src={`http://localhost:5000${product.image}`}
-              alt={product.name}
-              className="img-fluid rounded shadow-sm product-image"
-            />
+    <div className="min-h-screen bg-slate-950 py-16 text-slate-100">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-10 rounded-4xl border border-amber-400/10 bg-slate-900/95 p-8 shadow-2xl shadow-slate-950/40 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="rounded-[1.75rem] bg-slate-950 p-5 text-center shadow-lg shadow-slate-950/30">
+            <div className="inline-flex overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 p-6">
+              <img
+                src={`http://localhost:5000${product.image}`}
+                alt={product.name}
+                className="h-80 w-full object-contain"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-4xl font-semibold text-amber-300">
+                {product.name}
+              </h2>
+              <p className="mt-4 text-slate-400 leading-7">
+                {product.description}
+              </p>
+              <p className="mt-6 text-3xl font-bold text-slate-100">
+                ₹{product.price}
+              </p>
+            </div>
+
+            <div className="space-y-5 rounded-3xl border border-slate-800 bg-slate-950 p-6">
+              <div>
+                <label className="mb-3 block text-sm font-medium text-slate-300">
+                  Quantity
+                </label>
+                <div className="flex items-center gap-3">
+                  <button
+                    className="rounded-2xl bg-amber-300 px-4 py-2 text-black transition hover:bg-amber-200"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  >
+                    -
+                  </button>
+                  <span className="text-xl font-semibold text-slate-100">
+                    {quantity}
+                  </span>
+                  <button
+                    className="rounded-2xl bg-amber-300 px-4 py-2 text-black transition hover:bg-amber-200"
+                    onClick={() => setQuantity(quantity + 1)}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <button
+                className="w-full rounded-3xl bg-amber-300 px-6 py-3 text-lg font-semibold text-slate-950 transition hover:bg-amber-200"
+                onClick={handleAddToCart}
+              >
+                {cartItemId ? "Update Cart" : "Add to Cart"}
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* Right: Product Info */}
-        <div className="col-md-6 ">
-          <h2 className="fw-bold">{product.name}</h2>
-          <p className="text-muted">{product.description}</p>
-          <h4 className="text-primary fw-bold mb-3">₹{product.price}</h4>
-
-          <Form.Group className="mb-3" style={{ maxWidth: "120px" }}>
-            <Form.Label>Quantity</Form.Label>
-            <Form.Control
-              type="number"
-              min="1"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-            />
-          </Form.Group>
-
-          <Button
-            variant="success"
-            className="px-4 py-2"
-            onClick={handleAddToCart}
-          >
-            {cartItemId ? "Update Cart" : "Add to Cart"}
-          </Button>
-        </div>
       </div>
-
-      {/* CSS for hover zoom */}
-      <style>
-        {`
-          .product-image-container {
-            cursor: zoom-in;
-            overflow: hidden;
-          }
-
-          .product-image {
-            transition: transform 0.3s ease;
-            max-height: 400px;
-            object-fit: contain;
-          }
-
-          .product-image-container:hover .product-image {
-            transform: scale(1.1);
-          }
-        `}
-      </style>
     </div>
   );
 };

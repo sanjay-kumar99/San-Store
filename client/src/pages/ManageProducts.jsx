@@ -2,13 +2,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "../api/axios";
 import Swal from "sweetalert2";
-import { Modal, Button, Form } from "react-bootstrap";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { AuthContext } from "../context/AuthContext";
 import { motion } from "framer-motion";
 
 function ManageProducts() {
-  const { user } = useContext(AuthContext); 
+  const { user } = useContext(AuthContext);
   const userRole = user?.role;
 
   const [products, setProducts] = useState([]);
@@ -116,7 +115,7 @@ function ManageProducts() {
       Swal.fire(
         "Error",
         error.response?.data?.message || "Operation failed",
-        "error"
+        "error",
       );
     }
   };
@@ -158,165 +157,177 @@ function ManageProducts() {
   };
 
   return (
-    <div className="container my-5 p-3">
-      <h2 className="mb-4 text-center fw-bold">Manage Products</h2>
+    <div className="mx-auto my-8 max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mb-8 text-center">
+        <h2 className="text-3xl font-semibold text-amber-300">
+          Manage Products
+        </h2>
+      </div>
 
-      {/* Only admin can add product */}
       {userRole === "admin" && (
-        <div className="text-center mb-4">
-          <Button variant="primary" onClick={handleShow}>
+        <div className="mb-8 text-center">
+          <button
+            className="rounded-3xl bg-amber-300 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-200"
+            onClick={handleShow}
+          >
             Add Product
-          </Button>
+          </button>
         </div>
       )}
 
-      {/* Add/Edit Modal */}
-      <Modal show={show} onHide={handleClose} centered>
-        <Form onSubmit={handleSubmit} encType="multipart/form-data">
-          <Modal.Header closeButton>
-            <Modal.Title>{isEdit ? "Edit Product" : "Add Product"}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form.Group className="mb-3">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
+      {show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-4">
+          <div className="w-full max-w-3xl rounded-4xl border border-slate-800 bg-slate-950 p-8 shadow-2xl shadow-slate-950/40 max-h-[calc(100vh-4rem)] overflow-hidden">
+            <div className="mb-6 flex items-center justify-between">
+              <h3 className="text-2xl font-semibold text-amber-300">
+                {isEdit ? "Edit Product" : "Add Product"}
+              </h3>
+              <button
+                className="rounded-full bg-slate-800 p-3 text-slate-200 transition hover:bg-slate-700"
+                onClick={handleClose}
+              >
+                ✕
+              </button>
+            </div>
+            <form
+              onSubmit={handleSubmit}
+              className="grid gap-4 overflow-y-auto pr-2"
+              style={{ maxHeight: "calc(100vh - 9rem)" }}
+            >
+              <input
                 type="text"
                 name="name"
+                placeholder="Name"
                 value={form.name}
                 onChange={handleChange}
+                className="rounded-3xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
               />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Price</Form.Label>
-              <Form.Control
+              <input
                 type="number"
                 name="price"
+                placeholder="Price"
                 value={form.price}
                 onChange={handleChange}
+                className="rounded-3xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
               />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
+              <textarea
                 name="description"
+                rows="3"
+                placeholder="Description"
                 value={form.description}
                 onChange={handleChange}
+                className="rounded-3xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
               />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Category</Form.Label>
-              <Form.Control
+              <input
                 type="text"
                 name="category"
+                placeholder="Category"
                 value={form.category}
                 onChange={handleChange}
+                className="rounded-3xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
               />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Brand</Form.Label>
-              <Form.Control
+              <input
                 type="text"
                 name="brand"
+                placeholder="Brand"
                 value={form.brand}
                 onChange={handleChange}
+                className="rounded-3xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
               />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Count In Stock</Form.Label>
-              <Form.Control
+              <input
                 type="number"
                 name="countInStock"
+                placeholder="Count In Stock"
                 value={form.countInStock}
                 onChange={handleChange}
+                className="rounded-3xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
               />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Product Image</Form.Label>
-              <Form.Control
+              <label className="block text-sm font-medium text-slate-300">
+                Product Image
+              </label>
+              <input
                 type="file"
                 name="imageFile"
                 accept="image/*"
                 onChange={handleChange}
-                required={!isEdit}
+                className="rounded-3xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 file:rounded-full file:border-0 file:bg-amber-300 file:px-4 file:py-2 file:text-slate-950 focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
               />
               {preview && (
                 <img
                   src={preview}
                   alt="Preview"
-                  className="img-preview mt-2"
+                  className="max-h-48 rounded-3xl object-cover"
                 />
               )}
-            </Form.Group>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary">
-              {isEdit ? "Update" : "Add"} Product
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal>
+              <div className="mt-4 flex flex-wrap gap-3 justify-end">
+                <button
+                  type="button"
+                  className="rounded-3xl border border-slate-700 bg-slate-800 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:bg-slate-700"
+                  onClick={handleClose}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-3xl bg-amber-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-200"
+                >
+                  {isEdit ? "Update" : "Add"} Product
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
-      <hr />
-
-      {/* Product List */}
-      <div className="row">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {products.length === 0 ? (
-          <p className="text-center text-muted">No products found</p>
+          <p className="col-span-full text-center text-slate-400">
+            No products found
+          </p>
         ) : (
           products.map((product, index) => (
             <motion.div
               key={product._id}
-              className="col-md-4 mb-4"
+              className="rounded-4xl border border-slate-800 bg-slate-950 p-4 shadow-xl shadow-slate-950/20 transition hover:-translate-y-1"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.03 }}
+              transition={{ delay: index * 0.05 }}
+              whileHover={{ scale: 1.02 }}
             >
-              <div className="card h-100 shadow-sm border-0 product-card">
-                <img
-                  src={`http://localhost:5000${product.image}`}
-                  className="card-img-top"
-                  alt={product.name}
-                  style={{
-                    height: "200px",
-                    objectFit: "cover",
-                    borderRadius: "12px 12px 0 0",
-                  }}
-                />
-                <div className="card-body d-flex flex-column">
-                  <h5 className="card-title">{product.name}</h5>
-                  <p className="card-text mb-1">
-                    <strong>Price:</strong> ₹{product.price}
-                  </p>
-                  <p className="card-text text-truncate" title={product.description}>
-                    {product.description}
-                  </p>
-
-                  {/* Admin actions */}
-                  {userRole === "admin" && (
-                    <div className="d-flex justify-content-between mt-auto">
-                      <Button
-                        variant="warning"
-                        size="sm"
-                        onClick={() => handleEdit(product)}
-                      >
-                        <FaEdit /> Edit
-                      </Button>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleDelete(product._id)}
-                      >
-                        <FaTrash /> Delete
-                      </Button>
-                    </div>
-                  )}
+              <img
+                src={`http://localhost:5000${product.image}`}
+                alt={product.name}
+                className="mb-4 h-52 w-full rounded-3xl object-cover"
+              />
+              <div className="space-y-3">
+                <div>
+                  <h3 className="text-xl font-semibold text-amber-300">
+                    {product.name}
+                  </h3>
+                  <p className="text-slate-400">₹{product.price}</p>
                 </div>
+                <p
+                  className="text-slate-400 line-clamp-2"
+                  title={product.description}
+                >
+                  {product.description}
+                </p>
+                {userRole === "admin" && (
+                  <div className="flex flex-wrap gap-3 pt-4">
+                    <button
+                      className="rounded-3xl bg-amber-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-200"
+                      onClick={() => handleEdit(product)}
+                    >
+                      <FaEdit className="inline mr-2" /> Edit
+                    </button>
+                    <button
+                      className="rounded-3xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-400"
+                      onClick={() => handleDelete(product._id)}
+                    >
+                      <FaTrash className="inline mr-2" /> Delete
+                    </button>
+                  </div>
+                )}
               </div>
             </motion.div>
           ))

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -20,7 +20,6 @@ const Checkout = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // Map data to orderItems
       const mappedCart = data.map((item) => ({
         _id: item.productId._id,
         name: item.productId.name,
@@ -29,12 +28,9 @@ const Checkout = () => {
       }));
 
       setCartItems(mappedCart);
-
-      const total = mappedCart.reduce(
-        (acc, item) => acc + item.price * item.quantity,
-        0
+      setTotalPrice(
+        mappedCart.reduce((acc, item) => acc + item.price * item.quantity, 0),
       );
-      setTotalPrice(total);
     };
 
     fetchCart();
@@ -62,10 +58,6 @@ const Checkout = () => {
         totalPrice,
       };
 
-      // 🔹 Debug logs
-      console.log("Token:", token);
-      console.log("Order Data:", orderData);
-
       await axios.post("http://localhost:5000/api/orders", orderData, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -82,87 +74,99 @@ const Checkout = () => {
   };
 
   return (
-    <div className="container my-5">
-      <div
-        className="card shadow p-4"
-        style={{ maxWidth: "550px", margin: "auto" }}
-      >
-        <h2 className="text-center mb-4">Checkout</h2>
+    <div className="min-h-screen bg-slate-950 py-16 text-slate-100">
+      <div className="mx-auto max-w-xl rounded-[2rem] border border-slate-800 bg-slate-900/95 p-8 shadow-2xl shadow-slate-950/40">
+        <h2 className="text-center text-3xl font-semibold mb-8">Checkout</h2>
 
-        {/* Shipping Address */}
-        <div className="mb-3">
-          <label className="form-label">Address</label>
-          <input
-            type="text"
-            className="form-control"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-        </div>
-
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label">City</label>
+        <div className="space-y-6">
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-200">
+              Address
+            </label>
             <input
               type="text"
-              className="form-control"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
+              className="w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
             />
           </div>
 
-          <div className="col-md-6 mb-3">
-            <label className="form-label">Postal Code</label>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                City
+              </label>
+              <input
+                type="text"
+                className="w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                Postal Code
+              </label>
+              <input
+                type="text"
+                className="w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                value={postalCode}
+                onChange={(e) => setPostalCode(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-200">
+              Country
+            </label>
             <input
               type="text"
-              className="form-control"
-              value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value)}
+              className="w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
             />
           </div>
-        </div>
 
-        <div className="mb-3">
-          <label className="form-label">Country</label>
-          <input
-            type="text"
-            className="form-control"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-          />
-        </div>
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-200">
+              Payment Method
+            </label>
+            <select
+              className="w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            >
+              <option value="COD">Cash on Delivery</option>
+              <option value="Online">Online Payment</option>
+            </select>
+          </div>
 
-        {/* Payment Method */}
-        <div className="mb-4">
-          <label className="form-label">Payment Method</label>
-          <select
-            className="form-select"
-            value={paymentMethod}
-            onChange={(e) => setPaymentMethod(e.target.value)}
+          <div className="rounded-3xl border border-slate-700 bg-slate-950/80 p-5 text-slate-100">
+            <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
+            <div className="space-y-2 text-sm text-slate-300">
+              <p>
+                <span className="font-semibold text-slate-100">
+                  Total Items:
+                </span>{" "}
+                {cartItems.length}
+              </p>
+              <p>
+                <span className="font-semibold text-slate-100">
+                  Total Price:
+                </span>{" "}
+                ₹{totalPrice.toFixed(2)}
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handlePlaceOrder}
+            className="w-full rounded-3xl bg-sky-500 px-6 py-3 text-base font-semibold text-slate-950 transition hover:bg-sky-400"
           >
-            <option value="COD">Cash on Delivery</option>
-            <option value="Online">Online Payment</option>
-          </select>
+            Confirm Order
+          </button>
         </div>
-
-        {/* Order Summary */}
-        <div className="bg-dark p-3 rounded mb-4 text-white">
-          <h6 className="mb-1">Order Summary</h6>
-          <p className="mb-0">
-            <strong>Total Items:</strong> {cartItems.length}
-          </p>
-          <p className="mb-0">
-            <strong>Total Price:</strong> ₹{totalPrice.toFixed(2)}
-          </p>
-        </div>
-
-        {/* Place Order Button */}
-        <button
-          onClick={handlePlaceOrder}
-          className="btn btn-primary w-100 fw-bold"
-        >
-          Confirm Order
-        </button>
       </div>
     </div>
   );

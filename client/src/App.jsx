@@ -14,63 +14,65 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { CartProvider } from "./context/CartContext";
+import ContactUs from "./pages/ContactUs";
 
 function App() {
   return (
     <>
-    <CartProvider>
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/checkout"
-            element={
-              <ProtectedRoute>
-                <Checkout />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/manageorders"
-            element={
-              <ProtectedRoute>
-                <ManageOrders />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/manageproducts"
-            element={
-              <ProtectedRoute adminOnly={true}>
-                <ManageProducts />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/myorders"
-            element={
-              <ProtectedRoute>
-                <MyOrders />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/product/:id" element={<ProductDetails />} />
-          <Route path="/protectedroute" element={<ProtectedRoute />} />
-          <Route
-            path="/admindashboard"
-            element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
+      <CartProvider>
+        <BrowserRouter>
+          <Header />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedRoute>
+                  <Checkout />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/manageorders"
+              element={
+                <ProtectedRoute>
+                  <ManageOrders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/manageproducts"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <ManageProducts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/myorders"
+              element={
+                <ProtectedRoute>
+                  <MyOrders />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/product/:id" element={<ProductDetails />} />
+            <Route path="/protectedroute" element={<ProtectedRoute />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route
+              path="/admindashboard"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+          <Footer />
+        </BrowserRouter>
       </CartProvider>
     </>
   );
