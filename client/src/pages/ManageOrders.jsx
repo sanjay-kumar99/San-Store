@@ -53,9 +53,12 @@ const ManageOrders = () => {
     if (!window.confirm("Are you sure you want to delete this order?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/orders/${orderId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://ecommerce-api-nu2d.onrender.com/api/orders/${orderId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setOrders((prevOrders) =>
         prevOrders.filter((order) => order._id !== orderId),
       );

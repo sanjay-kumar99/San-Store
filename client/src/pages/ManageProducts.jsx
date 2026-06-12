@@ -295,7 +295,7 @@ function ManageProducts() {
               whileHover={{ scale: 1.02 }}
             >
               <img
-                src={`http://localhost:5000${product.image}`}
+                src={`https://ecommerce-api-nu2d.onrender.com${product.image}`}
                 alt={product.name}
                 className="mb-4 h-52 w-full rounded-3xl object-cover"
               />

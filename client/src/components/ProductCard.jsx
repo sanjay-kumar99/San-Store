@@ -19,9 +19,9 @@ const ProductCard = ({ product, isFeatured }) => {
       }
 
       await axios.post(
-        "http://localhost:5000/api/cart",
+        "https://ecommerce-api-nu2d.onrender.com/api/cart",
         { productId: product._id, quantity: 1 },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       await fetchCartCount();
@@ -39,13 +39,13 @@ const ProductCard = ({ product, isFeatured }) => {
         boxShadow: "0px 0px 25px rgba(212,175,55,0.4)",
       }}
       whileTap={{ scale: 0.98 }}
-      className="relative overflow-hidden rounded-[1.5rem] border border-amber-300/20 bg-slate-950 text-slate-100 shadow-xl transition hover:-translate-y-1"
+      className="relative overflow-hidden rounded-3xl border border-amber-300/20 bg-slate-950 text-slate-100 shadow-xl transition hover:-translate-y-1"
       style={{ background: "linear-gradient(145deg, #0d0d0d, #1a1a1a)" }}
     >
       <div className="relative">
         <Link to={`/product/${product._id}`}>
           <img
-            src={`http://localhost:5000${product.image}`}
+            src={`https://ecommerce-api-nu2d.onrender.com${product.image}`}
             alt={product.name}
             className="w-full"
             style={{
@@ -73,7 +73,10 @@ const ProductCard = ({ product, isFeatured }) => {
       </div>
 
       <div className="flex flex-col gap-3 p-4">
-        <Link to={`/product/${product._id}`} className="outline-none focus-visible:ring-2 focus-visible:ring-amber-300">
+        <Link
+          to={`/product/${product._id}`}
+          className="outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+        >
           <h5
             className="overflow-hidden text-ellipsis whitespace-nowrap text-lg font-semibold text-amber-300"
             title={product.name}
@@ -82,8 +85,10 @@ const ProductCard = ({ product, isFeatured }) => {
           </h5>
         </Link>
 
-        <p className="min-h-[3rem] text-sm leading-6 text-slate-400">
-          {product.description ? `${product.description.substring(0, 70)}...` : ""}
+        <p className="min-h-12 text-sm leading-6 text-slate-400">
+          {product.description
+            ? `${product.description.substring(0, 70)}...`
+            : ""}
         </p>
 
         <button

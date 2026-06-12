@@ -27,9 +27,12 @@ function AdminDashboard() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/products", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "https://ecommerce-api-nu2d.onrender.com/api/products",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setProducts(res.data);
     } catch (err) {
       console.error(err);
@@ -38,9 +41,12 @@ function AdminDashboard() {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/orders", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "https://ecommerce-api-nu2d.onrender.com/api/orders",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setOrders(res.data);
     } catch (err) {
       console.error(err);
@@ -49,9 +55,12 @@ function AdminDashboard() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/auth/users", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "https://ecommerce-api-nu2d.onrender.com/api/auth/users",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setUsers(res.data);
     } catch (err) {
       console.error(err);
@@ -69,9 +78,12 @@ function AdminDashboard() {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/api/products/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await axios.delete(
+          `https://ecommerce-api-nu2d.onrender.com/api/products/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
         Swal.fire("Deleted!", `${name} has been deleted.`, "success");
         fetchProducts();
       } catch (err) {
@@ -88,7 +100,7 @@ function AdminDashboard() {
   const handleSaveProduct = async () => {
     try {
       await axios.put(
-        `http://localhost:5000/api/products/${editProduct._id}`,
+        `https://ecommerce-api-nu2d.onrender.com/api/products/${editProduct._id}`,
         editProduct,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -118,7 +130,7 @@ function AdminDashboard() {
     if (status) {
       try {
         await axios.put(
-          `http://localhost:5000/api/orders/${id}`,
+          `https://ecommerce-api-nu2d.onrender.com/api/orders/${id}`,
           { status },
           {
             headers: { Authorization: `Bearer ${token}` },

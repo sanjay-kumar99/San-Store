@@ -54,9 +54,12 @@ const Cart = () => {
   const handleRemove = async (cartId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/cart/${cartId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://ecommerce-api-nu2d.onrender.com/api/cart/${cartId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       const updatedCart = cartItems.filter((item) => item.cartId !== cartId);
       setCartItems(updatedCart);

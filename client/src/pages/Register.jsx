@@ -54,7 +54,7 @@ function Register() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4 text-slate-100">
       <motion.div
-        className="w-full max-w-md rounded-[2rem] border border-amber-400/20 bg-slate-900/95 p-8 shadow-2xl shadow-slate-950/40"
+        className="w-full max-w-md rounded-4xl border border-amber-400/20 bg-slate-900/95 p-8 shadow-2xl shadow-slate-950/40"
         initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
       >

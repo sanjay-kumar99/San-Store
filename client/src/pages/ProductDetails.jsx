@@ -23,13 +23,13 @@ const ProductDetails = () => {
         setLoading(true);
 
         const { data: productData } = await axios.get(
-          `http://localhost:5000/api/products/${id}`,
+          `https://ecommerce-api-nu2d.onrender.com/api/products/${id}`,
         );
         setProduct(productData);
 
         if (token) {
           const { data: cartData } = await axios.get(
-            "http://localhost:5000/api/cart",
+            "https://ecommerce-api-nu2d.onrender.com/api/cart",
             { headers: { Authorization: `Bearer ${token}` } },
           );
 
@@ -62,14 +62,14 @@ const ProductDetails = () => {
     try {
       if (cartItemId) {
         await axios.put(
-          `http://localhost:5000/api/cart/${cartItemId}`,
+          `https://ecommerce-api-nu2d.onrender.com/api/cart/${cartItemId}`,
           { quantity },
           { headers: { Authorization: `Bearer ${token}` } },
         );
         Swal.fire("Updated", "Cart updated successfully", "success");
       } else {
         const { data } = await axios.post(
-          "http://localhost:5000/api/cart",
+          "https://ecommerce-api-nu2d.onrender.com/api/cart",
           { productId: product._id, quantity },
           { headers: { Authorization: `Bearer ${token}` } },
         );
@@ -104,7 +104,7 @@ const ProductDetails = () => {
           <div className="rounded-[1.75rem] bg-slate-950 p-5 text-center shadow-lg shadow-slate-950/30">
             <div className="inline-flex overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 p-6">
               <img
-                src={`http://localhost:5000${product.image}`}
+                src={`https://ecommerce-api-nu2d.onrender.com${product.image}`}
                 alt={product.name}
                 className="h-80 w-full object-contain"
               />

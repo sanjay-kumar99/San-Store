@@ -16,9 +16,12 @@ const Checkout = () => {
   useEffect(() => {
     const fetchCart = async () => {
       const token = localStorage.getItem("token");
-      const { data } = await axios.get("http://localhost:5000/api/cart", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { data } = await axios.get(
+        "https://ecommerce-api-nu2d.onrender.com/api/cart",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       const mappedCart = data.map((item) => ({
         _id: item.productId._id,
@@ -58,9 +61,13 @@ const Checkout = () => {
         totalPrice,
       };
 
-      await axios.post("http://localhost:5000/api/orders", orderData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(
+        "https://ecommerce-api-nu2d.onrender.com/api/orders",
+        orderData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       alert("Order placed successfully!");
       localStorage.removeItem("cart");
@@ -75,7 +82,7 @@ const Checkout = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 py-16 text-slate-100">
-      <div className="mx-auto max-w-xl rounded-[2rem] border border-slate-800 bg-slate-900/95 p-8 shadow-2xl shadow-slate-950/40">
+      <div className="mx-auto max-w-xl rounded-4xl border border-slate-800 bg-slate-900/95 p-8 shadow-2xl shadow-slate-950/40">
         <h2 className="text-center text-3xl font-semibold mb-8">Checkout</h2>
 
         <div className="space-y-6">

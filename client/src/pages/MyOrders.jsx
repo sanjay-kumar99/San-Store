@@ -10,7 +10,7 @@ const MyOrders = () => {
       try {
         const token = localStorage.getItem("token");
         const { data } = await axios.get(
-          "http://localhost:5000/api/orders/myorders",
+          "https://ecommerce-api-nu2d.onrender.com/api/orders/myorders",
           {
             headers: { Authorization: `Bearer ${token}` },
           },

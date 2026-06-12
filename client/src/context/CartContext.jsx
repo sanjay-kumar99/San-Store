@@ -16,9 +16,12 @@ export const CartProvider = ({ children }) => {
         return;
       }
 
-      const { data } = await axios.get("http://localhost:5000/api/cart", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { data } = await axios.get(
+        "https://ecommerce-api-nu2d.onrender.com/api/cart",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       setCartCount(data.length);
     } catch (error) {
