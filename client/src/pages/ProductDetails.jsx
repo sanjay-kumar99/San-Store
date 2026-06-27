@@ -6,6 +6,7 @@ import { FaHeart } from "react-icons/fa";
 import axios from "axios";
 import { useCart } from "../hooks/useCart"; // ✅ Cart context import
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config";
 
 const ProductDetails = () => {
   const navigate = useNavigate();
@@ -20,9 +21,7 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:5000/api/products/${id}`,
-        );
+        const { data } = await axios.get(`${API_URL}/api/products/${id}`);
         setProduct(data);
         if (data.images?.length > 0) setMainImage(data.images[0]);
       } catch (error) {

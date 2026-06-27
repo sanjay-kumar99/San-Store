@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config";
 
 const EditProfile = () => {
   const navigate = useNavigate();
@@ -37,15 +38,11 @@ const EditProfile = () => {
 
       const token = localStorage.getItem("token");
 
-      const { data } = await axios.put(
-        "http://localhost:5000/api/users/profile",
-        form,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const { data } = await axios.put(`${API_URL}/api/users/profile`, form, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       // update localStorage
       localStorage.setItem("user", JSON.stringify(data));
@@ -63,15 +60,10 @@ const EditProfile = () => {
   return (
     <section className="min-h-screen bg-[#f5f7fa] py-16">
       <div className="max-w-xl mx-auto px-5">
-
         <div className="bg-white p-8 rounded-3xl shadow-lg">
-
-          <h2 className="text-3xl font-bold mb-6 text-center">
-            Edit Profile
-          </h2>
+          <h2 className="text-3xl font-bold mb-6 text-center">Edit Profile</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-
             <input
               name="name"
               value={form.name}
@@ -95,11 +87,8 @@ const EditProfile = () => {
             >
               {loading ? "Updating..." : "Update Profile"}
             </button>
-
           </form>
-
         </div>
-
       </div>
     </section>
   );

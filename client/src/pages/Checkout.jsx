@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useCart } from "../hooks/useCart";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../config";
 
 const Checkout = () => {
   const { cartItems, clearCart } = useCart();
@@ -52,15 +53,11 @@ const Checkout = () => {
         totalPrice,
       };
 
-      const { data } = await axios.post(
-        "http://localhost:5000/api/orders",
-        orderData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+      const { data } = await axios.post(`${API_URL}/api/orders`, orderData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      );
+      });
 
       clearCart();
       navigate("/orders");

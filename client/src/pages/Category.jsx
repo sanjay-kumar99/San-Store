@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
+import { API_URL } from "../config";
 
 const Category = () => {
   const { category } = useParams(); // URL से category लेगा
@@ -12,7 +13,7 @@ const Category = () => {
     const fetchCategoryProducts = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/products/category/${category}`,
+          `${API_URL}/api/products/category/${category}`,
         );
         setProducts(data);
       } catch (error) {

@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook } from "react-icons/fa";
+import { API_URL } from "../config";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -23,8 +24,8 @@ const Auth = () => {
 
     try {
       const url = isLogin
-        ? "http://localhost:5000/api/auth/login"
-        : "http://localhost:5000/api/auth/register";
+        ? `${API_URL}/api/auth/login`
+        : `${API_URL}/api/auth/register`;
 
       const { data } = await axios.post(url, formData);
 
@@ -34,7 +35,6 @@ const Auth = () => {
 
       if (data.role === "admin") navigate("/admin");
       else navigate("/");
-
     } catch (error) {
       alert(error.response?.data?.message || "Something went wrong");
     }
@@ -51,17 +51,14 @@ const Auth = () => {
 
   return (
     <section className="min-h-screen flex">
-
       {/* LEFT FORM */}
       <div className="flex-1 flex items-center justify-center bg-white">
         <div className="w-full max-w-md p-8">
-
           <h2 className="text-3xl font-bold mb-6 text-center">
             {isLogin ? "Sign in" : "Create Account"}
           </h2>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
-
             {!isLogin && (
               <input
                 type="text"
@@ -111,7 +108,6 @@ const Auth = () => {
 
           {/* SOCIAL LOGIN (FIXED SECTION) */}
           <div className="mt-6 space-y-3">
-
             <button
               onClick={handleFacebookLogin}
               className="w-full flex items-center justify-center gap-2 border py-2 rounded-lg hover:bg-slate-100 transition"
@@ -127,7 +123,6 @@ const Auth = () => {
               <FaGoogle className="text-red-500" />
               Continue with Google
             </button>
-
           </div>
 
           {/* SWITCH */}
@@ -151,7 +146,6 @@ const Auth = () => {
           alt="auth"
         />
       </div>
-
     </section>
   );
 };

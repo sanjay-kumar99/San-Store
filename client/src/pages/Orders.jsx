@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "../config";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -13,14 +14,11 @@ const Orders = () => {
 
   const fetchOrders = async () => {
     try {
-      const { data } = await axios.get(
-        "http://localhost:5000/api/orders/myorders",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+      const { data } = await axios.get(`${API_URL}/api/orders/myorders`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      );
+      });
 
       setOrders(data);
     } catch (error) {
