@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import EditProductModal from "./EditProductModal";
+import { API_URL } from "../../config";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -81,12 +82,12 @@ const AdminProducts = () => {
 
     await Promise.all(
       selectedIds.map((id) =>
-        axios.delete(`http://localhost:5000/api/products/${id}`, {
+        axios.delete(`${API_URL}/api/products/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        })
-      )
+        }),
+      ),
     );
 
     Swal.fire("Deleted!", "Selected products deleted.", "success");
@@ -98,7 +99,6 @@ const AdminProducts = () => {
   return (
     <>
       <div className="bg-white p-8 rounded-3xl shadow">
-
         {/* HEADER */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Products</h1>
@@ -130,7 +130,6 @@ const AdminProducts = () => {
           <tbody>
             {products.map((p) => (
               <tr key={p._id} className="text-center border-b h-20">
-
                 {/* CHECKBOX */}
                 <td>
                   <input
@@ -142,10 +141,7 @@ const AdminProducts = () => {
 
                 {/* IMAGE */}
                 <td>
-                  <img
-                    src={p.images?.[0]}
-                    className="h-14 mx-auto rounded"
-                  />
+                  <img src={p.images?.[0]} className="h-14 mx-auto rounded" />
                 </td>
 
                 <td>{p.name}</td>
@@ -169,7 +165,6 @@ const AdminProducts = () => {
                     Delete
                   </button>
                 </td>
-
               </tr>
             ))}
           </tbody>

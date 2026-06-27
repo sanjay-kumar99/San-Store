@@ -8,6 +8,7 @@ import {
   FaShoppingCart,
   FaMoneyBillWave,
 } from "react-icons/fa";
+import { API_URL } from "../../config";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
@@ -19,14 +20,11 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const { data } = await axios.get(
-        "http://localhost:5000/api/admin/stats",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const { data } = await axios.get(`${API_URL}/api/admin/stats`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
       setStats(data);
     } catch (err) {
@@ -70,9 +68,7 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-10">
-          <h1 className="text-4xl font-bold text-slate-800">
-            Admin Dashboard
-          </h1>
+          <h1 className="text-4xl font-bold text-slate-800">Admin Dashboard</h1>
 
           <p className="text-slate-500 mt-2">
             Welcome back. Here's an overview of your store.
@@ -90,14 +86,10 @@ const AdminDashboard = () => {
                 <div>
                   <p className="text-sm opacity-90">{card.title}</p>
 
-                  <h2 className="text-3xl font-bold mt-2">
-                    {card.value}
-                  </h2>
+                  <h2 className="text-3xl font-bold mt-2">{card.value}</h2>
                 </div>
 
-                <div className="text-5xl opacity-30">
-                  {card.icon}
-                </div>
+                <div className="text-5xl opacity-30">{card.icon}</div>
               </div>
             </div>
           ))}
@@ -107,66 +99,44 @@ const AdminDashboard = () => {
         <div className="grid lg:grid-cols-2 gap-8 mt-10">
           {/* Recent Activity */}
           <div className="bg-white rounded-3xl p-6 shadow-sm">
-            <h2 className="text-xl font-bold mb-5">
-              Recent Activity
-            </h2>
+            <h2 className="text-xl font-bold mb-5">Recent Activity</h2>
 
             <div className="space-y-4">
               <div className="border-b pb-3">
-                <p className="font-medium">
-                  New Order Received
-                </p>
-                <span className="text-sm text-gray-500">
-                  2 minutes ago
-                </span>
+                <p className="font-medium">New Order Received</p>
+                <span className="text-sm text-gray-500">2 minutes ago</span>
               </div>
 
               <div className="border-b pb-3">
-                <p className="font-medium">
-                  New User Registered
-                </p>
-                <span className="text-sm text-gray-500">
-                  15 minutes ago
-                </span>
+                <p className="font-medium">New User Registered</p>
+                <span className="text-sm text-gray-500">15 minutes ago</span>
               </div>
 
               <div>
-                <p className="font-medium">
-                  Product Added
-                </p>
-                <span className="text-sm text-gray-500">
-                  1 hour ago
-                </span>
+                <p className="font-medium">Product Added</p>
+                <span className="text-sm text-gray-500">1 hour ago</span>
               </div>
             </div>
           </div>
 
           {/* Store Summary */}
           <div className="bg-white rounded-3xl p-6 shadow-sm">
-            <h2 className="text-xl font-bold mb-5">
-              Store Summary
-            </h2>
+            <h2 className="text-xl font-bold mb-5">Store Summary</h2>
 
             <div className="space-y-5">
               <div className="flex justify-between">
                 <span>Total Products</span>
-                <span className="font-semibold">
-                  {stats.products}
-                </span>
+                <span className="font-semibold">{stats.products}</span>
               </div>
 
               <div className="flex justify-between">
                 <span>Total Users</span>
-                <span className="font-semibold">
-                  {stats.users}
-                </span>
+                <span className="font-semibold">{stats.users}</span>
               </div>
 
               <div className="flex justify-between">
                 <span>Total Orders</span>
-                <span className="font-semibold">
-                  {stats.orders}
-                </span>
+                <span className="font-semibold">{stats.orders}</span>
               </div>
 
               <div className="flex justify-between">

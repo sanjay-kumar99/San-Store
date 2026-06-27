@@ -3,6 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { API_URL } from "../../config";
 
 const EditProductModal = ({ product, onClose, fetchProducts }) => {
   const [form, setForm] = useState({
@@ -57,16 +58,12 @@ const EditProductModal = ({ product, onClose, fetchProducts }) => {
       videos.forEach((vid) => {
         formData.append("videos", vid);
       });
-      await axios.put(
-        `http://localhost:5000/api/products/${product._id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+      await axios.put(`${API_URL}/api/products/${product._id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      );
+      });
 
       await Swal.fire({
         title: "Updated",

@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { API_URL } from "../../config";
 
 const AddProduct = () => {
   const [form, setForm] = useState({
@@ -52,7 +53,7 @@ const AddProduct = () => {
       images.forEach((img) => formData.append("images", img));
       videos.forEach((vid) => formData.append("videos", vid));
 
-      await axios.post("http://localhost:5000/api/products", formData, {
+      await axios.post(`${API_URL}/api/products `, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -102,17 +103,58 @@ const AddProduct = () => {
       <h2 className="text-2xl font-bold mb-6">Add New Product</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-
         {/* INPUTS */}
-        <input name="name" value={form.name} onChange={handleChange} placeholder="Name" className="input" />
-        <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" className="input" />
+        <input
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          placeholder="Name"
+          className="input"
+        />
+        <textarea
+          name="description"
+          value={form.description}
+          onChange={handleChange}
+          placeholder="Description"
+          className="input"
+        />
 
-        <input name="price" value={form.price} onChange={handleChange} placeholder="Price" className="input" />
-        <input name="oldPrice" value={form.oldPrice} onChange={handleChange} placeholder="Old Price" className="input" />
+        <input
+          name="price"
+          value={form.price}
+          onChange={handleChange}
+          placeholder="Price"
+          className="input"
+        />
+        <input
+          name="oldPrice"
+          value={form.oldPrice}
+          onChange={handleChange}
+          placeholder="Old Price"
+          className="input"
+        />
 
-        <input name="category" value={form.category} onChange={handleChange} placeholder="Category" className="input" />
-        <input name="brand" value={form.brand} onChange={handleChange} placeholder="Brand" className="input" />
-        <input name="countInStock" value={form.countInStock} onChange={handleChange} placeholder="Stock" className="input" />
+        <input
+          name="category"
+          value={form.category}
+          onChange={handleChange}
+          placeholder="Category"
+          className="input"
+        />
+        <input
+          name="brand"
+          value={form.brand}
+          onChange={handleChange}
+          placeholder="Brand"
+          className="input"
+        />
+        <input
+          name="countInStock"
+          value={form.countInStock}
+          onChange={handleChange}
+          placeholder="Stock"
+          className="input"
+        />
 
         {/* IMAGE UPLOAD */}
         <div>
