@@ -11,7 +11,7 @@ const BestSeller = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = axios.get(`${API_URL}/api/products`);
+        const { data } = await axios.get(`${API_URL}/api/products`);
         setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -27,7 +27,7 @@ const BestSeller = () => {
           Best Seller Products
         </h2>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {products
+          {[...(products || [])]
             .sort(() => 0.5 - Math.random())
             .slice(0, 4)
             .map((product) => (
