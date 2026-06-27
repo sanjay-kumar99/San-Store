@@ -1,167 +1,221 @@
-/* eslint-disable no-unused-vars */
-import { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import { CartContext } from "../context/CartContext";
-import { AuthContext } from "../context/AuthContext";
-import { motion, AnimatePresence } from "framer-motion";
-import logo from "../assets/logo.jpg";
-import pic from "../assets/user.webp";
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useEffect, useRef, useState } from "react";
+import { FaSearch, FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { useCart } from "../hooks/useCart";
+import { useWishlist } from "../hooks/useWishlist";
 
-function Header() {
-  const navigate = useNavigate();
-  const { user, logout } = useContext(AuthContext);
-  const { cartCount } = useContext(CartContext);
+const Header = () => {
+  const { cartItems } = useCart();
+  const { wishlistItems } = useWishlist();
 
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [showMenu, setShowMenu] = useState(false);
 
-  const handleLogout = () => {
-    Swal.fire({
-      title: "Logout?",
-      text: "You will be logged out from your account.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#0d6efd",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Logout",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        logout();
-        navigate("/login");
-        Swal.fire("Success", "Logged out successfully!", "success");
+  const menuRef = useRef(null);
+
+  const wishlistCount = wishlistItems?.length || 0;
+
+  const totalCount = (cartItems || []).reduce(
+    (acc, item) => acc + item.quantity,
+    0,
+  );
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
       }
-    });
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+
+    setUser(null);
+
+    window.location.href = "/";
   };
 
   return (
-    <nav className="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-6">
-        <Link
-          className="flex items-center gap-3 text-white hover:text-slate-100"
-          to="/"
-        >
-          <img
-            src={logo}
-            alt="logo"
-            width="40"
-            height="40"
-            className="h-10 w-10 rounded-lg object-cover"
-          />
-          <span className="text-lg font-semibold">Shoply</span>
-        </Link>
+    <>
+      {/* Top Bar */}
+      <div className="bg-[#071d36] text-white text-sm py-2 px-5 flex justify-between">
+        <p>Welcome to SanStore</p>
+        <p>24/7 Support | +91 8146774370</p>
+      </div>
 
-        <button
-          className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-slate-800 px-3 py-2 text-sm text-white transition hover:bg-white/10 md:hidden"
-          type="button"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle navigation"
-        >
-          <span>{mobileOpen ? "Close" : "Menu"}</span>
-        </button>
+      {/* Navbar */}
+      <header className="bg-white sticky top-0 z-50 shadow-lg">
+        <div className="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between ">
+          <div className="flex items-center gap-2">
+            <img
+              src="/logo/logo.png"
+              alt="SanStore Logo"
+              className="w-10 h-10 object-contain"
+            />
+            <Link to="/">
+              <h1 className="text-3xl font-bold">
+                <span className="text-blue-600">San</span>
+                <span className="text-black">Store</span>
+              </h1>
+            </Link>
+          </div>
 
-        <div
-          className={`${mobileOpen ? "block" : "hidden"} w-full md:block md:w-auto`}
-        >
-          <div className="flex flex-col gap-4 rounded-xl border border-white/10 bg-slate-950/90 p-4 md:flex-row md:items-center md:gap-6 md:border-0 md:bg-transparent md:p-0">
-            <ul className="flex flex-col gap-3 text-sm md:flex-row md:items-center">
-              <li>
-                <Link
-                  className="block rounded-lg px-3 py-2 text-white transition hover:bg-white/10"
-                  to="/"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="block rounded-lg px-3 py-2 text-white transition hover:bg-white/10"
-                  to="/manageproducts"
-                >
-                  Products
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="block rounded-lg px-3 py-2 text-white transition hover:bg-white/10"
-                  to="/contact"
-                >
-                  Contact Us
-                </Link>
-              </li>
-            </ul>
+          {/* Menu */}
+          <nav className="hidden lg:flex gap-8 font-medium">
+            <Link to="/" className="hover:text-blue-600">
+              Home
+            </Link>
 
-            <div className="flex flex-col gap-3 md:flex-row md:items-center">
-              <Link
-                to="/cart"
-                className="relative inline-flex items-center rounded-lg border border-white/20 bg-slate-800 px-3 py-2 text-sm text-white transition hover:bg-white/10"
+            <Link to="/shop" className="hover:text-blue-600">
+              Shop
+            </Link>
+
+            <Link to="/categories" className="hover:text-blue-600">
+              Categories
+            </Link>
+
+            <Link to="/contact" className="hover:text-blue-600">
+              Contact
+            </Link>
+          </nav>
+
+          {/* Search */}
+          <div className="hidden md:flex bg-[#f1f5f9] rounded-full px-4 py-2 items-center w-80 shadow-inner">
+            <input
+              type="text"
+              placeholder="Search products..."
+              className="bg-transparent outline-none flex-1"
+            />
+            <FaSearch className="text-gray-500" />
+          </div>
+
+          {/* Icons */}
+          <div className="flex items-center gap-6 text-xl">
+            {/* Wishlist */}
+            <Link to="/wishlist" className="relative">
+              <FaHeart className="cursor-pointer hover:text-red-500 transition" />
+
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+
+            {/* Cart */}
+            <Link to="/cart" className="relative">
+              <FaShoppingCart className="cursor-pointer hover:text-blue-600 transition" />
+
+              {totalCount > 0 && (
+                <span className="absolute -top-2 -right-3 bg-blue-600 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                  {totalCount}
+                </span>
+              )}
+            </Link>
+
+            {/* User */}
+            <div className="relative" ref={menuRef}>
+              <div
+                className="flex items-center gap-2 cursor-pointer hover:text-blue-600 transition"
+                onClick={() => {
+                  if (user) {
+                    setShowMenu(!showMenu);
+                  }
+                }}
               >
-                🛒
-                {cartCount > 0 && (
-                  <span className="absolute -right-2 -top-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[11px] font-semibold text-white">
-                    {cartCount}
-                  </span>
+                {user ? (
+                  <span className="text-sm font-semibold">{user.name}</span>
+                ) : (
+                  <Link to="/auth" className="relative">
+                    <FaUser />
+                  </Link>
                 )}
-              </Link>
+              </div>
 
-              {user ? (
-                <div className="relative">
+              {/* Dropdown */}
+              {user && showMenu && (
+                <div
+                  className="absolute right-0 mt-3 w-60 bg-white rounded-2xl shadow-2xl overflow-hidden z-50"
+                  onMouseLeave={() => setShowMenu(false)}
+                >
+                  {/* User Info */}
+                  <div className="px-5 py-4 bg-slate-50 border-b">
+                    <p className="font-bold">{user.name}</p>
+                    <p className="text-xs text-gray-500">{user.email}</p>
+                  </div>
+
+                  {/* Links */}
+                  <Link
+                    to="/profile"
+                    className="block px-5 py-3 hover:bg-gray-100"
+                  >
+                    👤 My Profile
+                  </Link>
+
+                  <Link
+                    to="/orders"
+                    className="block px-5 py-3 hover:bg-gray-100"
+                  >
+                    📦 My Orders
+                  </Link>
+
+                  <Link
+                    to="/wishlist"
+                    className="block px-5 py-3 hover:bg-gray-100"
+                  >
+                    ❤️ Wishlist
+                  </Link>
+
+                  <Link
+                    to="/cart"
+                    className="block px-5 py-3 hover:bg-gray-100"
+                  >
+                    🛒 Cart
+                  </Link>
+
+                  {/* Admin */}
+                  {user.role === "admin" && (
+                    <Link
+                      to="/admin"
+                      className="block px-5 py-3 text-blue-600 hover:bg-gray-100"
+                    >
+                      ⚙️ Admin Dashboard
+                    </Link>
+                  )}
+
+                  {/* Logout */}
                   <button
-                    type="button"
-                    className="flex items-center gap-2 rounded-lg border border-white/20 bg-slate-800 px-3 py-2 text-sm text-white transition hover:bg-white/10"
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    onClick={logout}
+                    className="w-full text-left px-5 py-3 text-red-600 hover:bg-red-50"
                   >
-                    <img
-                      src={pic}
-                      alt="user"
-                      width="35"
-                      height="35"
-                      className="h-9 w-9 rounded-full object-cover"
-                    />
-                    <span className="hidden md:inline">Hi, {user.name}</span>
+                    🚪 Logout
                   </button>
-
-                  <AnimatePresence>
-                    {dropdownOpen && (
-                      <motion.div
-                        className="absolute right-0 mt-2 w-44 rounded-xl bg-white p-3 text-slate-900 shadow-lg"
-                        style={{ zIndex: 999 }}
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                      >
-                        <button
-                          className="w-full rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
-                          onClick={handleLogout}
-                        >
-                          Logout
-                        </button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2 md:flex-row">
-                  <Link
-                    className="rounded-lg border border-white/20 bg-slate-800 px-3 py-2 text-sm text-white transition hover:bg-white/10"
-                    to="/login"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    className="rounded-lg bg-sky-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-sky-500"
-                    to="/register"
-                  >
-                    Register
-                  </Link>
                 </div>
               )}
             </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </header>
+    </>
   );
-}
+};
 
 export default Header;

@@ -10,7 +10,7 @@ export const registerUser = async (req, res) => {
   try {
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     // Check if first user
@@ -20,7 +20,7 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password,
-      role: isFirstUser ? 'admin' : 'user'
+      role: isFirstUser ? "admin" : "user",
     });
 
     res.status(201).json({
@@ -28,14 +28,12 @@ export const registerUser = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id)
+      token: generateToken(user._id),
     });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 // @desc    Login user
 // @route   POST /api/auth/login

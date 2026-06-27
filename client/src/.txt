@@ -1,0 +1,44 @@
+src
+│
+├── components
+│     Header
+│     Footer
+│     HeroSlider
+│     ProductCard
+│
+├── pages
+│     Home
+│     Shop
+│     ProductDetails
+│     Cart
+│     Login
+│     Register
+│
+├── context
+│     AuthContext
+│     CartContext
+│
+├── services
+│     authApi.js
+│     productApi.js
+│     cartApi.js
+│
+├── App.jsx
+└── main.jsx
+
+
+src
+└── components
+      Header.jsx
+      Hero.jsx
+      Features.jsx
+      Categories.jsx
+      ProductCard.jsx
+      BestSeller.jsx
+      Banner.jsx
+      Brands.jsx
+      Newsletter.jsx
+      Footer.jsx
+
+
+     

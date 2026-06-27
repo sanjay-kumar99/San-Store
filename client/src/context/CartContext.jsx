@@ -1,42 +1,140 @@
-/* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useState, useEffect } from "react";
+// src/context/CartContext.jsx
+import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 
-export const CartContext = createContext();
+const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cartCount, setCartCount] = useState(0);
+  const [cartItems, setCartItems] = useState([]);
 
-  // Fetch cart count from backend
-  const fetchCartCount = async () => {
+  // Cart load
+  const fetchCart = async () => {
     try {
       const token = localStorage.getItem("token");
+
       if (!token) {
-        setCartCount(0);
+        setCartItems([]);
         return;
       }
 
-      const { data } = await axios.get(
-        "https://ecommerce-api-nu2d.onrender.com/api/cart",
-        {
-          headers: { Authorization: `Bearer ${token}` },
+      const { data } = await axios.get("http://localhost:5000/api/cart", {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
-      setCartCount(data.length);
+      setCartItems(data);
     } catch (error) {
-      console.error("Failed to fetch cart count:", error);
+      console.log(error);
     }
   };
 
-  // Fetch cart count on mount
   useEffect(() => {
-    fetchCartCount();
+    const loadCart = async () => {
+      await fetchCart();
+    };
+
+    loadCart();
   }, []);
 
+  // Add cart
+  const addToCart = async (productId, quantity = 1) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.post(
+        "http://localhost:5000/api/cart",
+        {
+          productId,
+          quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      fetchCart();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Remove item
+  const removeItem = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const { data } = await axios.delete(
+        `http://localhost:5000/api/cart/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setCartItems(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Update quantity
+  const updateQty = async (id, quantity) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const { data } = await axios.put(
+        `http://localhost:5000/api/cart/${id}`,
+        {
+          quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setCartItems(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Clear cart
+  const clearCart = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.delete("http://localhost:5000/api/cart", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setCartItems([]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <CartContext.Provider value={{ cartCount, setCartCount, fetchCartCount }}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        removeItem,
+        updateQty,
+        clearCart,
+        fetchCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
 };
+
+export default CartContext;

@@ -1,92 +1,174 @@
-/* eslint-disable no-unused-vars */
-import { motion } from "framer-motion";
+// src/components/Footer.jsx
 
-function Footer() {
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTwitter,
+  FaLinkedinIn,
+} from "react-icons/fa";
+import { Link } from "react-router-dom";
+
+const Footer = () => {
   return (
-    <motion.footer
-      className="bg-slate-950 text-slate-100 pt-10 mt-10"
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-3">
-          {/* ABOUT */}
+    <footer className="bg-[#02111f] text-white mt-20">
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-12">
+          {/* Company */}
           <div>
-            <h4 className="text-2xl font-semibold text-white">SanC@rt</h4>
-            <p className="mt-4 text-slate-400 leading-7">
-              Your one-stop e-commerce platform for quality products at the best
-              prices. We deliver trust, speed, and satisfaction.
+            <h2 className="text-3xl font-bold text-blue-500 mb-5">
+              ShopSphere
+            </h2>
+
+            <p className="text-gray-400 leading-7">
+              Premium Ecommerce Website for electronics, gadgets and modern
+              accessories. Experience shopping with quality and trust.
             </p>
           </div>
 
-          {/* QUICK LINKS */}
+          {/* Company Links */}
           <div>
-            <h5 className="text-xl font-semibold text-white mb-4">
-              Quick Links
-            </h5>
-            <ul className="space-y-3 text-slate-400">
+            <h3 className="font-bold text-xl mb-5">Company</h3>
+
+            <ul className="space-y-3 text-gray-400">
               <li>
-                <a href="/" className="hover:text-white transition">
-                  Home
-                </a>
+                <Link className="hover:text-white duration-300" to="/about">
+                  About Us
+                </Link>
               </li>
+
               <li>
-                <a
-                  href="/manageproducts"
-                  className="hover:text-white transition"
-                >
-                  Products
-                </a>
+                <Link className="hover:text-white duration-300" to="/shop">
+                  Shop
+                </Link>
               </li>
+
               <li>
-                <a href="/contact" className="hover:text-white transition">
+                <Link className="hover:text-white duration-300" to="/contact">
                   Contact Us
-                </a>
+                </Link>
               </li>
+
               <li>
-                <a href="/cart" className="hover:text-white transition">
-                  Cart
-                </a>
+                <Link className="hover:text-white duration-300" to="/blog">
+                  Blog
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* CONTACT */}
+          {/* Support */}
           <div>
-            <h5 className="text-xl font-semibold text-white mb-4">Contact</h5>
-            <p className="text-slate-400 mb-2">📍 Ludhiana, Punjab, India</p>
-            <p className="text-slate-400 mb-2">📞 +91 98765 43210</p>
-            <p className="text-slate-400">✉️ support@sancart.com</p>
+            <h3 className="font-bold text-xl mb-5">Support</h3>
 
-            {/* SOCIAL */}
-            <div className="mt-5 flex gap-4 text-2xl text-slate-200">
-              <a href="#" className="hover:text-white transition">
-                🌐
+            <ul className="space-y-3 text-gray-400">
+              <li>
+                <Link className="hover:text-white duration-300" to="/faq">
+                  FAQ
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  className="hover:text-white duration-300"
+                  to="/privacy-policy"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+
+              <li>
+                <Link className="hover:text-white duration-300" to="/terms">
+                  Terms & Conditions
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  className="hover:text-white duration-300"
+                  to="/shipping-policy"
+                >
+                  Shipping Policy
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Social */}
+          <div>
+            <h3 className="font-bold text-xl mb-5">Follow Us</h3>
+
+            <div className="flex gap-4">
+              {/* Facebook */}
+              <a
+                href="https://facebook.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-black hover:bg-blue-600 hover:text-white transition duration-300 shadow-lg"
+              >
+                <FaFacebookF />
               </a>
-              <a href="#" className="hover:text-white transition">
-                🐦
+
+              {/* Instagram */}
+              <a
+                href="https://instagram.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-black hover:bg-pink-600 hover:text-white transition duration-300 shadow-lg"
+              >
+                <FaInstagram />
               </a>
-              <a href="#" className="hover:text-white transition">
-                📸
+
+              {/* Twitter */}
+              <a
+                href="https://x.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-black hover:bg-sky-500 hover:text-white transition duration-300 shadow-lg"
+              >
+                <FaTwitter />
               </a>
-              <a href="#" className="hover:text-white transition">
-                💼
+
+              {/* LinkedIn */}
+              <a
+                href="https://linkedin.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-black hover:bg-blue-700 hover:text-white transition duration-300 shadow-lg"
+              >
+                <FaLinkedinIn />
               </a>
+            </div>
+
+            <div className="mt-6 text-gray-400 text-sm space-y-2">
+              <p>📧 support@sancart.com</p>
+              <p>📞 +91 8146774370</p>
+              <p>📍 Ludhiana, Punjab, India</p>
             </div>
           </div>
         </div>
 
-        <div className="mt-10 border-t border-slate-800 pt-6 text-center">
-          <p className="text-sm text-slate-500">
-            &copy; {new Date().getFullYear()}{" "}
-            <span className="text-slate-100 font-semibold">SanC@rt</span> | All
-            Rights Reserved
-          </p>
+        <hr className="border-gray-700 my-10" />
+
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400 text-sm">
+          <p>© 2026 ShopSphere. All Rights Reserved.</p>
+
+          <div className="flex gap-6">
+            <Link to="/privacy-policy" className="hover:text-white">
+              Privacy Policy
+            </Link>
+
+            <Link to="/terms" className="hover:text-white">
+              Terms
+            </Link>
+
+            <Link to="/contact" className="hover:text-white">
+              Contact
+            </Link>
+          </div>
         </div>
       </div>
-    </motion.footer>
+    </footer>
   );
-}
+};
 
 export default Footer;

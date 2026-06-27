@@ -1,105 +1,82 @@
-/* eslint-disable no-unused-vars */
-import React, { useContext } from "react";
-import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
-import { toast } from "react-toastify";
-import { CartContext } from "../context/CartContext";
-import { motion } from "framer-motion";
+import { useCart } from "../hooks/useCart";
+import { useWishlist } from "../hooks/useWishlist";
+import { Link } from "react-router-dom";
+import { useState } from "react";
 
-const ProductCard = ({ product, isFeatured }) => {
-  const navigate = useNavigate();
-  const { fetchCartCount } = useContext(CartContext);
+const ProductCard = ({ product }) => {
+  const { addToCart } = useCart();
+  const { addToWishlist } = useWishlist(); // ✅ HERE
+  const [loading, setLoading] = useState(false);
 
   const handleAddToCart = async () => {
+    if (loading) return;
+    setLoading(true);
+
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("Please login first!");
-        return;
-      }
-
-      await axios.post(
-        "https://ecommerce-api-nu2d.onrender.com/api/cart",
-        { productId: product._id, quantity: 1 },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-
-      await fetchCartCount();
-      toast.success(`${product.name} added to cart`);
-      navigate("/cart");
+      await addToCart(product._id, 1);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      console.log(error);
+    }
+
+    setLoading(false);
+  };
+
+  const handleWishlist = async () => {
+    try {
+      await addToWishlist(product._id);
+    } catch (error) {
+      console.log(error);
     }
   };
 
   return (
-    <motion.div
-      whileHover={{
-        scale: 1.04,
-        boxShadow: "0px 0px 25px rgba(212,175,55,0.4)",
-      }}
-      whileTap={{ scale: 0.98 }}
-      className="relative overflow-hidden rounded-3xl border border-amber-300/20 bg-slate-950 text-slate-100 shadow-xl transition hover:-translate-y-1"
-      style={{ background: "linear-gradient(145deg, #0d0d0d, #1a1a1a)" }}
-    >
-      <div className="relative">
-        <Link to={`/product/${product._id}`}>
-          <img
-            src={`https://ecommerce-api-nu2d.onrender.com${product.image}`}
-            alt={product.name}
-            className="w-full"
-            style={{
-              height: isFeatured ? "260px" : "220px",
-              objectFit: "cover",
-            }}
-          />
-        </Link>
+    <div className="bg-white rounded-3xl p-6 shadow flex flex-col relative">
+      {/* ❤️ Wishlist Button */}
+      <button
+        onClick={handleWishlist}
+        className="absolute top-3 right-3 text-red-500 text-xl hover:scale-110 transition"
+      >
+        ❤️
+      </button>
 
-        <span className="absolute left-4 top-4 rounded-full bg-amber-300 px-3 py-1 text-sm font-semibold text-slate-950">
-          ₹{product.price}
-        </span>
+      <Link
+        to={`/product/${product._id}`}
+        className="flex justify-center mb-4 relative"
+      >
+        <img
+          src={product.images?.[0] || "/placeholder.png"}
+          alt={product.name}
+          className="h-40 object-contain hover:scale-105 transition duration-300"
+        />
 
-        {product.isNew && (
-          <span className="absolute right-4 top-4 rounded-full bg-emerald-500 px-2 py-1 text-xs font-semibold text-white">
-            NEW
+        {product.videos?.length > 0 && (
+          <span className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+            ▶ Video
           </span>
         )}
+      </Link>
 
-        {product.onSale && (
-          <span className="absolute right-4 top-12 rounded-full bg-yellow-300 px-2 py-1 text-xs font-semibold text-slate-950">
-            SALE
-          </span>
-        )}
-      </div>
+      <h3 className="text-lg font-semibold">{product.name}</h3>
+      <p className="text-slate-600">{product.category}</p>
+      <p className="text-blue-600 font-bold mt-2">₹{product.price}</p>
 
-      <div className="flex flex-col gap-3 p-4">
+      <div className="mt-4 flex gap-3">
+        <button
+          disabled={loading}
+          onClick={handleAddToCart}
+          className="flex-1 bg-blue-600 text-white py-2 rounded-full"
+        >
+          {loading ? "Adding..." : "Add To Cart"}
+        </button>
+
         <Link
           to={`/product/${product._id}`}
-          className="outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+          className="flex-1 bg-slate-200 text-slate-900 py-2 rounded-full text-center hover:bg-slate-300 transition"
         >
-          <h5
-            className="overflow-hidden text-ellipsis whitespace-nowrap text-lg font-semibold text-amber-300"
-            title={product.name}
-          >
-            {product.name}
-          </h5>
+          View
         </Link>
-
-        <p className="min-h-12 text-sm leading-6 text-slate-400">
-          {product.description
-            ? `${product.description.substring(0, 70)}...`
-            : ""}
-        </p>
-
-        <button
-          type="button"
-          onClick={handleAddToCart}
-          className="mt-2 rounded-3xl bg-amber-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-200"
-        >
-          Add to Cart
-        </button>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

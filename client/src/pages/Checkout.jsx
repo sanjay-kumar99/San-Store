@@ -1,181 +1,216 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+/* eslint-disable no-unused-vars */
+import { useState } from "react";
+import { useCart } from "../hooks/useCart";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Checkout = () => {
+  const { cartItems, clearCart } = useCart();
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
 
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [postalCode, setPostalCode] = useState("");
-  const [country, setCountry] = useState("");
+  const [address, setAddress] = useState({
+    name: "",
+    phone: "",
+    pincode: "",
+    city: "",
+    state: "",
+    fullAddress: "",
+  });
+
   const [paymentMethod, setPaymentMethod] = useState("COD");
 
-  useEffect(() => {
-    const fetchCart = async () => {
-      const token = localStorage.getItem("token");
-      const { data } = await axios.get(
-        "https://ecommerce-api-nu2d.onrender.com/api/cart",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+  const handleChange = (e) => {
+    setAddress({ ...address, [e.target.name]: e.target.value });
+  };
 
-      const mappedCart = data.map((item) => ({
-        _id: item.productId._id,
-        name: item.productId.name,
-        price: item.productId.price,
-        quantity: item.quantity,
-      }));
-
-      setCartItems(mappedCart);
-      setTotalPrice(
-        mappedCart.reduce((acc, item) => acc + item.price * item.quantity, 0),
-      );
-    };
-
-    fetchCart();
-  }, []);
+  const totalPrice = (cartItems || []).reduce((acc, item) => {
+    const product = item.productId || item.product;
+    return acc + (product?.price || 0) * (item.quantity || 1);
+  }, 0);
 
   const handlePlaceOrder = async () => {
     try {
-      const token = localStorage.getItem("token");
-
-      if (!cartItems || cartItems.length === 0) {
-        alert("Your cart is empty!");
-        return;
-      }
-
       const orderData = {
-        orderItems: cartItems.map((item) => ({
-          product: item._id,
-          qty: item.quantity,
-          price: item.price,
-        })),
-        shippingAddress: { address, city, postalCode, country },
+        orderItems: cartItems.map((item) => {
+          const product = item.productId || item.product;
+
+          return {
+            product: product?._id,
+            qty: item.quantity,
+            price: product?.price,
+          };
+        }),
+
+        shippingAddress: {
+          address: address.fullAddress,
+          city: address.city,
+          postalCode: address.pincode,
+          country: "India",
+        },
+
         paymentMethod,
-        taxPrice: 0,
-        shippingPrice: 0,
         totalPrice,
       };
 
-      await axios.post(
-        "https://ecommerce-api-nu2d.onrender.com/api/orders",
+      const { data } = await axios.post(
+        "http://localhost:5000/api/orders",
         orderData,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         },
       );
 
-      alert("Order placed successfully!");
-      localStorage.removeItem("cart");
-      setCartItems([]);
-      setTotalPrice(0);
-      navigate("/myorders");
+      clearCart();
+      navigate("/orders");
     } catch (error) {
-      console.error("Order Error:", error.response?.data || error.message);
-      alert("Failed to place order");
+      console.log(error.response?.data || error.message);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 py-16 text-slate-100">
-      <div className="mx-auto max-w-xl rounded-4xl border border-slate-800 bg-slate-900/95 p-8 shadow-2xl shadow-slate-950/40">
-        <h2 className="text-center text-3xl font-semibold mb-8">Checkout</h2>
+    <section className="min-h-screen bg-[#f5f7fa] py-12 px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* HEADER */}
+        <h1 className="text-4xl font-bold text-center mb-10 text-slate-900">
+          Checkout
+        </h1>
 
-        <div className="space-y-6">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-200">
-              Address
-            </label>
-            <input
-              type="text"
-              className="w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            />
-          </div>
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* LEFT - ADDRESS */}
+          <div className="bg-white rounded-3xl shadow p-6">
+            <h2 className="text-2xl font-bold mb-6">Delivery Address</h2>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                City
-              </label>
+            <div className="grid gap-4">
               <input
-                type="text"
-                className="w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
+                name="name"
+                placeholder="Full Name"
+                className="w-full p-3 border rounded-xl focus:outline-blue-500"
+                onChange={handleChange}
+              />
+
+              <input
+                name="phone"
+                placeholder="Phone Number"
+                className="w-full p-3 border rounded-xl"
+                onChange={handleChange}
+              />
+
+              <input
+                name="pincode"
+                placeholder="Pincode"
+                className="w-full p-3 border rounded-xl"
+                onChange={handleChange}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  name="city"
+                  placeholder="City"
+                  className="w-full p-3 border rounded-xl"
+                  onChange={handleChange}
+                />
+
+                <input
+                  name="state"
+                  placeholder="State"
+                  className="w-full p-3 border rounded-xl"
+                  onChange={handleChange}
+                />
+              </div>
+
+              <textarea
+                name="fullAddress"
+                placeholder="Full Address"
+                className="w-full p-3 border rounded-xl"
+                rows="4"
+                onChange={handleChange}
               />
             </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Postal Code
-              </label>
-              <input
-                type="text"
-                className="w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-                value={postalCode}
-                onChange={(e) => setPostalCode(e.target.value)}
-              />
+          </div>
+
+          {/* RIGHT - ORDER SUMMARY */}
+          <div className="bg-white rounded-3xl shadow p-6">
+            <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
+
+            <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
+              {(cartItems || []).map((item, index) => {
+                const product = item.productId || item.product;
+
+                return (
+                  <div
+                    key={index}
+                    className="flex justify-between text-sm border-b pb-2"
+                  >
+                    <span className="text-slate-700">{product?.name}</span>
+
+                    <span className="font-semibold text-blue-600">
+                      ₹{(product?.price || 0) * (item.quantity || 1)}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
-          </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-200">
-              Country
-            </label>
-            <input
-              type="text"
-              className="w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-            />
-          </div>
+            {/* TOTAL */}
+            <div className="mt-6 flex justify-between text-lg font-bold">
+              <span>Total</span>
+              <span className="text-blue-600">₹{totalPrice}</span>
+            </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-200">
-              Payment Method
-            </label>
-            <select
-              className="w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
+            {/* PAYMENT */}
+            <div className="mt-8">
+              <h3 className="text-lg font-bold mb-3">Payment Method</h3>
+
+              <div className="space-y-2">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    value="COD"
+                    checked={paymentMethod === "COD"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  />
+                  Cash on Delivery
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    value="Card"
+                    checked={paymentMethod === "Card"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  />
+                  Card Payment
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    value="NetBanking"
+                    checked={paymentMethod === "NetBanking"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  />
+                  Net Banking
+                </label>
+              </div>
+            </div>
+
+            {/* BUTTON */}
+            <button
+              onClick={handlePlaceOrder}
+              className="mt-8 w-full bg-linear-to-r from-blue-600 to-blue-500 text-white py-3 rounded-2xl font-semibold hover:opacity-90 transition"
             >
-              <option value="COD">Cash on Delivery</option>
-              <option value="Online">Online Payment</option>
-            </select>
-          </div>
+              Place Order (₹{totalPrice})
+            </button>
 
-          <div className="rounded-3xl border border-slate-700 bg-slate-950/80 p-5 text-slate-100">
-            <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
-            <div className="space-y-2 text-sm text-slate-300">
-              <p>
-                <span className="font-semibold text-slate-100">
-                  Total Items:
-                </span>{" "}
-                {cartItems.length}
-              </p>
-              <p>
-                <span className="font-semibold text-slate-100">
-                  Total Price:
-                </span>{" "}
-                ₹{totalPrice.toFixed(2)}
-              </p>
-            </div>
+            <p className="text-xs text-gray-400 mt-3 text-center">
+              Secure checkout • 100% safe payment
+            </p>
           </div>
-
-          <button
-            onClick={handlePlaceOrder}
-            className="w-full rounded-3xl bg-sky-500 px-6 py-3 text-base font-semibold text-slate-950 transition hover:bg-sky-400"
-          >
-            Confirm Order
-          </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
