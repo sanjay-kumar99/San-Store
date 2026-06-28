@@ -6,12 +6,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../../config";
 
-const AdminOrders = () => {
+const Orders = () => {
   const [orders, setOrders] = useState([]);
 
   const fetchOrders = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/orders", {
+      const { data } = await axios.get(`${API_URL}/api/orders`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -46,7 +46,7 @@ const AdminOrders = () => {
   };
 
   const deleteOrder = async (id) => {
-    await axios.delete(`http://localhost:5000/api/orders/${id}`, {
+    await axios.delete(`${API_URL}/api/orders/${id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -153,4 +153,4 @@ const AdminOrders = () => {
   );
 };
 
-export default AdminOrders;
+export default Orders;

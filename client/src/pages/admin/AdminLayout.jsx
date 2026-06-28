@@ -16,86 +16,109 @@ const AdminLayout = () => {
   const navigate = useNavigate();
 
   const linkClass = ({ isActive }) =>
-    `flex items-center gap-3 py-2 px-3 rounded ${
+    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative
+    ${
       isActive
-        ? "bg-slate-800 text-white"
+        ? "bg-indigo-600 text-white shadow-md"
         : "text-slate-300 hover:bg-slate-800 hover:text-white"
     }`;
 
   return (
     <div className="h-screen flex bg-slate-100 overflow-hidden">
+      {/* BACKDROP (mobile) */}
+      {open && (
+        <div
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+        />
+      )}
 
-      {/* Sidebar (IMPORTANT: sticky instead of fixed) */}
+      {/* SIDEBAR */}
       <aside
         className={`
-          w-64 bg-slate-900 text-white p-6
-          h-screen
+          fixed lg:static z-50
+          w-72 h-screen
+          bg-slate-950 text-white
           flex flex-col
           transition-transform duration-300
-          lg:translate-x-0
-          fixed lg:static
-          ${open ? "translate-x-0" : "-translate-x-full"}
+          ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">Admin Panel</h1>
-
-          <button className="lg:hidden" onClick={() => setOpen(false)}>
-            <FaTimes size={22} />
+        {/* HEADER */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800">
+          <h1 className="text-xl font-bold tracking-wide">🛒 Admin Panel</h1>
+          <button
+            className="lg:hidden text-white"
+            onClick={() => setOpen(false)}
+          >
+            <FaTimes size={20} />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto space-y-2">
-          <NavLink to="/admin" className={linkClass} onClick={() => setOpen(false)}>
-            <FaChartLine />
-            Dashboard
+        {/* NAV (scrollable area) */}
+        <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-2">
+          <NavLink
+            to="/admin"
+            className={linkClass}
+            onClick={() => setOpen(false)}
+          >
+            <FaChartLine /> Dashboard
           </NavLink>
-
-          <NavLink to="/admin/products" className={linkClass} onClick={() => setOpen(false)}>
-            <FaBox />
-            Products
+          <NavLink
+            to="/admin/products"
+            className={linkClass}
+            onClick={() => setOpen(false)}
+          >
+            <FaBox /> Products
           </NavLink>
-
-          <NavLink to="/admin/add-product" className={linkClass} onClick={() => setOpen(false)}>
-            <FaPlus />
-            Add Product
+          <NavLink
+            to="/admin/add-product"
+            className={linkClass}
+            onClick={() => setOpen(false)}
+          >
+            <FaPlus /> Add Product
           </NavLink>
-
-          <NavLink to="/admin/users" className={linkClass} onClick={() => setOpen(false)}>
-            <FaUsers />
-            Users
+          <NavLink
+            to="/admin/users"
+            className={linkClass}
+            onClick={() => setOpen(false)}
+          >
+            <FaUsers /> Users
           </NavLink>
-
-          <NavLink to="/admin/orders" className={linkClass} onClick={() => setOpen(false)}>
-            <FaShoppingCart />
-            Orders
+          <NavLink
+            to="/admin/orders"
+            className={linkClass}
+            onClick={() => setOpen(false)}
+          >
+            <FaShoppingCart /> Orders
           </NavLink>
+          <button
+            onClick={() => {
+              localStorage.clear();
+              navigate("/");
+            }}
+            className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 transition py-3 rounded-lg font-medium"
+          >
+            <FaSignOutAlt />
+            Logout
+          </button>
         </nav>
 
-        <button
-          onClick={() => {
-            localStorage.clear();
-            navigate("/");
-          }}
-          className="flex items-center gap-3 text-red-400 mt-6"
-        >
-          <FaSignOutAlt />
-          Logout
-        </button>
+        {/* LOGOUT (always pinned at bottom) */}
+        {/* <div className="p-5 border-t border-slate-800"></div> */}
       </aside>
 
-      {/* Main (ONLY THIS SCROLLS) */}
+      {/* MAIN */}
       <div className="flex-1 flex flex-col h-screen">
-
-        {/* Mobile header */}
-        <div className="lg:hidden bg-white shadow p-4 flex items-center">
-          <button onClick={() => setOpen(true)}>
-            <FaBars size={22} />
+        {/* TOP BAR */}
+        <header className="h-14 bg-white shadow flex items-center px-4 lg:px-6">
+          <button className="lg:hidden mr-3" onClick={() => setOpen(true)}>
+            <FaBars size={20} />
           </button>
-          <h2 className="ml-4 font-bold text-lg">Admin Panel</h2>
-        </div>
+          <h2 className="font-semibold text-slate-700">Admin Dashboard</h2>
+        </header>
 
-        {/* SCROLL AREA FIX */}
+        {/* CONTENT (independent scroll) */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
