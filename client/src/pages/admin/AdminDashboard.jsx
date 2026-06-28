@@ -65,44 +65,61 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-100">
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
         {/* Header */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-bold text-slate-800">Admin Dashboard</h1>
+        <div className="mb-8 sm:mb-10 flex flex-col gap-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800">
+            Admin Dashboard
+          </h1>
 
-          <p className="text-slate-500 mt-2">
+          <p className="text-sm sm:text-base text-slate-500">
             Welcome back. Here's an overview of your store.
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
           {cards.map((card, index) => (
             <div
               key={index}
-              className={`bg-linear-to-r ${card.bg} rounded-3xl p-6 text-white shadow-lg hover:scale-105 transition duration-300`}
+              className={`bg-linear-to-r ${card.bg}
+              rounded-2xl
+              p-5
+               sm:p-6
+             text-white
+            shadow-md
+            hover:shadow-2xl
+            hover:-translate-y-1
+             transition-all
+              duration-300`}
             >
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="text-sm opacity-90">{card.title}</p>
+                  <p className="text-xs sm:text-sm opacity-90"></p>
 
-                  <h2 className="text-3xl font-bold mt-2">{card.value}</h2>
+                  <h2 className="text-2xl sm:text-3xl font-bold mt-2">
+                    {card.value}
+                  </h2>
                 </div>
 
-                <div className="text-5xl opacity-30">{card.icon}</div>
+                <div className="text-4xl sm:text-5xl opacity-20">
+                  {card.icon}
+                </div>
               </div>
             </div>
           ))}
         </div>
 
         {/* Analytics Section */}
-        <div className="grid lg:grid-cols-2 gap-8 mt-10">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-8 mt-8">
           {/* Recent Activity */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm">
-            <h2 className="text-xl font-bold mb-5">Recent Activity</h2>
+          <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 hover:shadow-lg transition-all">
+            <h2 className="text-lg sm:text-xl font-bold mb-5 text-slate-800">
+              Recent Activity
+            </h2>
 
             <div className="space-y-4">
-              <div className="border-b pb-3">
+              <div className="border-b border-slate-100 pb-3">
                 <p className="font-medium">New Order Received</p>
                 <span className="text-sm text-gray-500">2 minutes ago</span>
               </div>
@@ -124,7 +141,7 @@ const AdminDashboard = () => {
             <h2 className="text-xl font-bold mb-5">Store Summary</h2>
 
             <div className="space-y-5">
-              <div className="flex justify-between">
+              <div className="flex items-center justify-between">
                 <span>Total Products</span>
                 <span className="font-semibold">{stats.products}</span>
               </div>
@@ -141,7 +158,7 @@ const AdminDashboard = () => {
 
               <div className="flex justify-between">
                 <span>Total Revenue</span>
-                <span className="font-semibold text-green-600">
+                <span className="font-bold text-green-600">
                   ₹{stats.revenue}
                 </span>
               </div>

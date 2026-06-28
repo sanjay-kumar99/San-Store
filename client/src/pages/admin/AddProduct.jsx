@@ -53,7 +53,7 @@ const AddProduct = () => {
       images.forEach((img) => formData.append("images", img));
       videos.forEach((vid) => formData.append("videos", vid));
 
-      await axios.post(`${API_URL}/api/products `, formData, {
+      await axios.post(`${API_URL}/api/products`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -99,62 +99,67 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
-      <h2 className="text-2xl font-bold mb-6">Add New Product</h2>
+    <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6 lg:p-8">
+      <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-8">
+        Add New Product
+      </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* INPUTS */}
-        <input
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Name"
-          className="input"
-        />
-        <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          placeholder="Description"
-          className="input"
-        />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* INPUTS */}
+          <input
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Product Name"
+            className="input"
+          />
+          <textarea
+            rows={5}
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="Product Description"
+            className="input resize-none"
+          />
 
-        <input
-          name="price"
-          value={form.price}
-          onChange={handleChange}
-          placeholder="Price"
-          className="input"
-        />
-        <input
-          name="oldPrice"
-          value={form.oldPrice}
-          onChange={handleChange}
-          placeholder="Old Price"
-          className="input"
-        />
+          <input
+            name="price"
+            value={form.price}
+            onChange={handleChange}
+            placeholder="Price"
+            className="input"
+          />
+          <input
+            name="oldPrice"
+            value={form.oldPrice}
+            onChange={handleChange}
+            placeholder="Old Price"
+            className="input"
+          />
 
-        <input
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          placeholder="Category"
-          className="input"
-        />
-        <input
-          name="brand"
-          value={form.brand}
-          onChange={handleChange}
-          placeholder="Brand"
-          className="input"
-        />
-        <input
-          name="countInStock"
-          value={form.countInStock}
-          onChange={handleChange}
-          placeholder="Stock"
-          className="input"
-        />
+          <input
+            name="category"
+            value={form.category}
+            onChange={handleChange}
+            placeholder="Category"
+            className="input"
+          />
+          <input
+            name="brand"
+            value={form.brand}
+            onChange={handleChange}
+            placeholder="Brand"
+            className="input"
+          />
+          <input
+            name="countInStock"
+            value={form.countInStock}
+            onChange={handleChange}
+            placeholder="Stock"
+            className="input"
+          />
+        </div>
 
         {/* IMAGE UPLOAD */}
         <div>
@@ -165,15 +170,16 @@ const AddProduct = () => {
             accept="image/*"
             onChange={handleImage}
             ref={imageRef}
+            className="mt-3 block w-full rounded-xl border border-slate-300 p-3"
           />
 
           {/* IMAGE PREVIEW */}
-          <div className="flex gap-3 mt-2 flex-wrap">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mt-4">
             {images.map((img, i) => (
               <img
                 key={i}
                 src={URL.createObjectURL(img)}
-                className="w-20 h-20 object-cover rounded"
+                className="w-full aspect-square object-cover rounded-xl border"
               />
             ))}
           </div>
@@ -188,15 +194,16 @@ const AddProduct = () => {
             accept="video/*"
             onChange={handleVideos}
             ref={videoRef}
+            className="mt-3 block w-full rounded-xl border border-slate-300 p-3"
           />
 
           {/* VIDEO PREVIEW */}
-          <div className="flex gap-3 mt-2 flex-wrap">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
             {videos.map((vid, i) => (
               <video
                 key={i}
                 src={URL.createObjectURL(vid)}
-                className="w-24 h-24 rounded"
+                className="w-full rounded-xl border"
                 controls
               />
             ))}
@@ -207,10 +214,10 @@ const AddProduct = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-lg text-white ${
+          className={`w-full py-3.5 rounded-xl font-semibold transition-all ${
             loading
               ? "bg-gray-400"
-              : "bg-linear-to-r from-blue-600 to-indigo-600 hover:opacity-90"
+              : "bg-linear-to-r from-blue-600 to-indigo-600 hover:shadow-xl hover:-translate-y-0.5"
           }`}
         >
           {loading ? "Uploading..." : "Add Product"}

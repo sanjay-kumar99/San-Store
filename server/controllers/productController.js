@@ -6,11 +6,15 @@ import cloudinary from "../config/cloudinary.js";
 ========================= */
 export const getProducts = async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 0;
+    const search = req.query.search?.trim();
+    let products = [];
 
-    const products = await Product.find({})
-      .limit(limit)
-      .sort({ createdAt: -1 });
+    if (search) {
+      // ✅ Only search in product name
+      products = await Product.find({
+        name: { $regex: search, $options: "i" },
+      });
+    }
 
     res.json(products);
   } catch (error) {
@@ -67,11 +71,11 @@ export const createProduct = async (req, res) => {
                 (error, result) => {
                   if (error) return reject(error);
                   resolve(result.secure_url);
-                }
+                },
               )
               .end(file.buffer);
           });
-        })
+        }),
       );
     }
 
@@ -89,11 +93,11 @@ export const createProduct = async (req, res) => {
                 (error, result) => {
                   if (error) return reject(error);
                   resolve(result.secure_url);
-                }
+                },
               )
               .end(file.buffer);
           });
-        })
+        }),
       );
     }
 
@@ -161,11 +165,11 @@ export const updateProduct = async (req, res) => {
                 (error, result) => {
                   if (error) return reject(error);
                   resolve(result.secure_url);
-                }
+                },
               )
               .end(file.buffer);
           });
-        })
+        }),
       );
 
       product.images = [...product.images, ...newImages];
@@ -185,11 +189,11 @@ export const updateProduct = async (req, res) => {
                 (error, result) => {
                   if (error) return reject(error);
                   resolve(result.secure_url);
-                }
+                },
               )
               .end(file.buffer);
           });
-        })
+        }),
       );
 
       product.videos = [...product.videos, ...newVideos];

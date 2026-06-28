@@ -56,51 +56,99 @@ const AdminOrders = () => {
   };
 
   return (
-    <div className="bg-white p-8 rounded-3xl shadow">
-      <h1 className="text-3xl font-bold mb-8">Orders</h1>
+    <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">
+          Orders
+        </h1>
 
-      <table className="w-full">
-        <thead>
-          <tr className="border-b h-14">
-            <th>User</th>
-            <th>Total</th>
-            <th>Status</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
+        <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-medium w-fit">
+          Total Orders : {orders.length}
+        </span>
+      </div>
 
-        <tbody>
-          {orders.map((order) => (
-            <tr key={order._id} className="text-center border-b h-16">
-              <td>{order.user?.name}</td>
-
-              <td>₹{order.totalPrice}</td>
-
-              <td>
-                <select
-                  value={order.status}
-                  onChange={(e) => updateStatus(order._id, e.target.value)}
-                  className="border p-2 rounded"
-                >
-                  <option>Pending</option>
-                  <option>Processing</option>
-                  <option>Shipped</option>
-                  <option>Delivered</option>
-                </select>
-              </td>
-
-              <td>
-                <button
-                  onClick={() => deleteOrder(order._id)}
-                  className="bg-red-600 text-white px-4 py-2 rounded-xl"
-                >
-                  Delete
-                </button>
-              </td>
+      {/* Desktop Table */}
+      <div className="hidden lg:block overflow-x-auto">
+        <table className="min-w-full">
+          <thead className="bg-slate-100">
+            <tr className="h-14">
+              <th className="px-4">User</th>
+              <th className="px-4">Total</th>
+              <th className="px-4">Status</th>
+              <th className="px-4">Delete</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {orders.map((order) => (
+              <tr
+                key={order._id}
+                className="text-center border-b h-20 hover:bg-slate-50"
+              >
+                <td>{order.user?.name}</td>
+
+                <td className="font-semibold">₹{order.totalPrice}</td>
+
+                <td>
+                  <select
+                    value={order.status}
+                    onChange={(e) => updateStatus(order._id, e.target.value)}
+                    className="border rounded-lg p-2"
+                  >
+                    <option>Pending</option>
+                    <option>Processing</option>
+                    <option>Shipped</option>
+                    <option>Delivered</option>
+                  </select>
+                </td>
+
+                <td>
+                  <button
+                    onClick={() => deleteOrder(order._id)}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl transition"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="grid grid-cols-1 gap-4 lg:hidden">
+        {orders.map((order) => (
+          <div key={order._id} className="border rounded-2xl p-5 shadow-sm">
+            <h2 className="font-bold text-lg">{order.user?.name}</h2>
+
+            <p className="mt-2">
+              <span className="font-semibold">Total:</span> ₹{order.totalPrice}
+            </p>
+
+            <div className="mt-3">
+              <select
+                value={order.status}
+                onChange={(e) => updateStatus(order._id, e.target.value)}
+                className="w-full border rounded-lg p-2"
+              >
+                <option>Pending</option>
+                <option>Processing</option>
+                <option>Shipped</option>
+                <option>Delivered</option>
+              </select>
+            </div>
+
+            <button
+              onClick={() => deleteOrder(order._id)}
+              className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl transition"
+            >
+              Delete Order
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
