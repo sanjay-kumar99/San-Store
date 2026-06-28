@@ -7,13 +7,16 @@ import cloudinary from "../config/cloudinary.js";
 export const getProducts = async (req, res) => {
   try {
     const search = req.query.search?.trim();
-    let products = [];
+
+    let products;
 
     if (search) {
-      // ✅ Only search in product name
       products = await Product.find({
         name: { $regex: search, $options: "i" },
       });
+    } else {
+      // 🔥 THIS WAS MISSING
+      products = await Product.find({});
     }
 
     res.json(products);
