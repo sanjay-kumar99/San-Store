@@ -355,6 +355,9 @@ const Header = () => {
               <Link onClick={() => setMobileMenu(false)} to="/contact">
                 Contact
               </Link>
+              <Link onClick={() => setMobileMenu(false)} to="/auth">
+                Login
+              </Link>
             </nav>
           </div>
         </div>
