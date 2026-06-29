@@ -10,10 +10,16 @@ import {
   FaChartLine,
   FaSignOutAlt,
 } from "react-icons/fa";
+import { useAuth } from "../../hooks/useAuth";
 
 const AdminLayout = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { logout } = useAuth();
+  const handleLogout = () => {
+    logout();
+    navigate("/", { replace: true });
+  };
 
   const linkClass = ({ isActive }) =>
     `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative
@@ -94,8 +100,7 @@ const AdminLayout = () => {
           </NavLink>
           <button
             onClick={() => {
-              localStorage.clear();
-              navigate("/");
+              handleLogout();
             }}
             className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 transition py-3 rounded-lg font-medium"
           >

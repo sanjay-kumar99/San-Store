@@ -1,10 +1,15 @@
 import { useWishlist } from "../hooks/useWishlist";
 import { FaTrash, FaHeart } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 const Wishlist = () => {
   const { wishlistItems, removeFromWishlist } = useWishlist();
 
   const items = Array.isArray(wishlistItems) ? wishlistItems : [];
+  const handleRemove = async (id) => {
+    await removeFromWishlist(id);
+    toast.success("Removed from Wishlist");
+  };
 
   return (
     <div className="min-h-screen bg-[#f5f7fa] py-10 px-4">
@@ -48,7 +53,7 @@ const Wishlist = () => {
 
                 {/* DELETE BUTTON */}
                 <button
-                  onClick={() => removeFromWishlist(item._id)}
+                  onClick={() => handleRemove(item._id)}
                   className="absolute top-3 right-3 bg-white/90 hover:bg-red-500 hover:text-white text-red-500 p-2 rounded-full shadow transition"
                 >
                   <FaTrash size={14} />

@@ -9,16 +9,18 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../hooks/useCart";
 import { useWishlist } from "../hooks/useWishlist";
+import { useAuth } from "../hooks/useAuth";
 import { API_URL } from "../config";
 
 const Header = () => {
+  const navigate = useNavigate();
   const { cartItems } = useCart();
   const { wishlistItems } = useWishlist();
 
-  const [user, setUser] = useState(null);
+  const { user, logout } = useAuth();
   const [showMenu, setShowMenu] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -38,11 +40,6 @@ const Header = () => {
   );
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
-  }, []);
-
-  useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setShowMenu(false);
@@ -53,11 +50,9 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const logout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    setUser(null);
-    window.location.href = "/";
+  const handleLogout = () => {
+    logout();
+    navigate("/", { replace: true });
   };
 
   // ✅ SEARCH ONLY ON BUTTON CLICK
@@ -252,7 +247,7 @@ const Header = () => {
                   )}
 
                   <button
-                    onClick={logout}
+                    onClick={handleLogout}
                     className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
                   >
                     Logout
@@ -268,7 +263,6 @@ const Header = () => {
           </div>
         </div>
 
-        {/* MOBILE SEARCH */}
         {/* MOBILE SEARCH */}
         {showSearch && (
           <div className="md:hidden px-4 pb-3 relative">
@@ -355,7 +349,6 @@ const Header = () => {
               <Link onClick={() => setMobileMenu(false)} to="/contact">
                 Contact
               </Link>
-             
             </nav>
           </div>
         </div>

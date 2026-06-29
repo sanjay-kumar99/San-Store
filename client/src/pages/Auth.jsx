@@ -3,8 +3,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook } from "react-icons/fa";
 import { API_URL } from "../config";
+import { useAuth } from "../hooks/useAuth";
 
 const Auth = () => {
+  const { login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
@@ -29,12 +31,14 @@ const Auth = () => {
 
       const { data } = await axios.post(url, formData);
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("role", data.role);
-      localStorage.setItem("user", JSON.stringify(data));
+      // Context + LocalStorage update
+      login(data);
 
-      if (data.role === "admin") navigate("/admin");
-      else navigate("/");
+      if (data.role === "admin") {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
     } catch (error) {
       alert(error.response?.data?.message || "Something went wrong");
     }

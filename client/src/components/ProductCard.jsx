@@ -2,43 +2,83 @@ import { useCart } from "../hooks/useCart";
 import { useWishlist } from "../hooks/useWishlist";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { useAuth } from "../hooks/useAuth";
 
 const ProductCard = ({ product }) => {
-  const { addToCart } = useCart();
-  const { addToWishlist } = useWishlist(); // ✅ HERE
-  const [loading, setLoading] = useState(false);
+  const { addToCart, cartItems = [] } = useCart();
+  const { addToWishlist, wishlistItems = [] } = useWishlist();
+  const { token } = useAuth();
+
+  const [loadingCart, setLoadingCart] = useState(false);
+  const [loadingWish, setLoadingWish] = useState(false);
+
+  const isOutOfStock = product.stock === 0;
+
+  const isInCart = cartItems?.some((item) => item.productId === product._id);
+  const isInWishlist = wishlistItems?.some(
+    (item) => item.productId === product._id
+  );
 
   const handleAddToCart = async () => {
-    if (loading) return;
-    setLoading(true);
-
-    try {
-      await addToCart(product._id, 1);
-    } catch (error) {
-      console.log(error);
+    if (!token) {
+      return toast.error("🔐 Please login to continue");
     }
 
-    setLoading(false);
+    if (isOutOfStock) {
+      return toast.error("❌ Product is out of stock");
+    }
+
+    if (isInCart) {
+      return toast("⚠️ Already added to cart");
+    }
+
+    try {
+      setLoadingCart(true);
+      await addToCart(product._id);
+      toast.success("🛒 Added to cart successfully");
+    } catch (err) {
+      toast.error("❌ Failed to add to cart");
+    } finally {
+      setLoadingCart(false);
+    }
   };
 
   const handleWishlist = async () => {
+    if (!token) {
+      return toast.error("🔐 Please login to continue");
+    }
+
+    if (isInWishlist) {
+      return toast("❤️ Already in wishlist");
+    }
+
     try {
+      setLoadingWish(true);
       await addToWishlist(product._id);
-    } catch (error) {
-      console.log(error);
+      toast.success("❤️ Added to wishlist");
+    } catch (err) {
+      toast.error("❌ Failed to add to wishlist");
+    } finally {
+      setLoadingWish(false);
     }
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 shadow flex flex-col relative">
+    <div className="bg-white rounded-3xl p-6 shadow-md hover:shadow-xl transition flex flex-col relative">
+      
       {/* ❤️ Wishlist Button */}
       <button
         onClick={handleWishlist}
-        className="absolute top-3 right-3 text-red-500 text-xl hover:scale-110 transition"
+        disabled={loadingWish}
+        className={`absolute top-3 right-3 text-xl transition ${
+          isInWishlist ? "text-red-600" : "text-red-400"
+        } hover:scale-110`}
       >
-        ❤️
+        {loadingWish ? "..." : "❤️"}
       </button>
 
+      {/* Product Image */}
       <Link
         to={`/product/${product._id}`}
         className="flex justify-center mb-4 relative"
@@ -54,19 +94,38 @@ const ProductCard = ({ product }) => {
             ▶ Video
           </span>
         )}
+
+        {isOutOfStock && (
+          <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
+            Out of Stock
+          </span>
+        )}
       </Link>
 
+      {/* Details */}
       <h3 className="text-lg font-semibold">{product.name}</h3>
       <p className="text-slate-600">{product.category}</p>
       <p className="text-blue-600 font-bold mt-2">₹{product.price}</p>
 
+      {/* Buttons */}
       <div className="mt-4 flex gap-3">
+        
         <button
-          disabled={loading}
           onClick={handleAddToCart}
-          className="flex-1 bg-blue-600 text-white py-2 rounded-full"
+          disabled={loadingCart || isOutOfStock}
+          className={`flex-1 py-2 rounded-full transition ${
+            isOutOfStock
+              ? "bg-gray-300 cursor-not-allowed"
+              : isInCart
+              ? "bg-green-500 text-white"
+              : "bg-blue-600 text-white hover:bg-blue-700"
+          }`}
         >
-          {loading ? "Adding..." : "Add To Cart"}
+          {loadingCart
+            ? "Adding..."
+            : isInCart
+            ? "In Cart"
+            : "Add to Cart"}
         </button>
 
         <Link

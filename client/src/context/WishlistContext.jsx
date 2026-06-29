@@ -2,32 +2,40 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "../config";
+import { useAuth } from "../hooks/useAuth";
 
 const WishlistContext = createContext();
 
 export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
-
-  const token = localStorage.getItem("token");
+  const { token } = useAuth();
 
   const fetchWishlist = async () => {
-    if (!token) return;
+    try {
+      if (!token) {
+        setWishlist([]);
+        return;
+      }
 
-    const { data } = await axios.get("http://localhost:5000/api/wishlist", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      const { data } = await axios.get(`${API_URL}/api/wishlist`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    setWishlist(data);
+      setWishlist(data);
+    } catch (error) {
+      console.log("Wishlist Error:", error.response?.data || error.message);
+    }
   };
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      fetchWishlist();
-    }
-  }, []);
+    fetchWishlist();
+  }, [token]);
   const addToWishlist = async (productId) => {
     await axios.post(
-      "http://localhost:5000/api/wishlist",
+      `${API_URL}/api/wishlist`,
       { productId },
       { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -36,7 +44,7 @@ export const WishlistProvider = ({ children }) => {
   };
 
   const removeFromWishlist = async (id) => {
-    await axios.delete(`http://localhost:5000/api/wishlist/${id}`, {
+    await axios.delete(`${API_URL}/api/wishlist/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
