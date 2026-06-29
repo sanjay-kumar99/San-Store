@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-
 import { useEffect, useRef, useState } from "react";
 import {
   FaSearch,
@@ -23,7 +21,7 @@ const Header = () => {
 
   const [showMenu, setShowMenu] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
+  const [mobileSearch, setMobileSearch] = useState(false);
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -33,13 +31,12 @@ const Header = () => {
   const menuRef = useRef(null);
 
   const wishlistCount = wishlistItems?.length || 0;
-
   const totalCount = (cartItems || []).reduce(
     (acc, item) => acc + item.quantity,
-    0,
+    0
   );
 
-  // close dropdown on outside click
+  // OUTSIDE CLICK CLOSE DROPDOWN
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -56,6 +53,7 @@ const Header = () => {
     navigate("/", { replace: true });
   };
 
+  // SEARCH API
   const handleSearch = async (e) => {
     if (e) e.preventDefault();
     if (!query.trim()) return;
@@ -67,7 +65,7 @@ const Header = () => {
       setResults(data);
       setShowResults(true);
     } catch (error) {
-      console.log("Search error:", error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -83,47 +81,145 @@ const Header = () => {
 
       {/* HEADER */}
       <header className="bg-white sticky top-0 z-50 shadow-md">
-        <div className="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
-          {/* LOGO */}
-          <div className="flex items-center gap-2">
-            <img src="/logo/logo.png" className="w-10 h-10" />
-            <Link to="/">
-              <h1 className="text-2xl font-bold">
-                <span className="text-blue-600">San</span>Store
-              </h1>
-            </Link>
+        <div className="max-w-7xl mx-auto px-5">
+
+          {/* MAIN ROW */}
+          <div className="flex items-center justify-between py-4 gap-4">
+
+            {/* LOGO */}
+            <div className="flex items-center gap-2 shrink-0">
+              <img src="/logo/logo.png" className="w-10 h-10" />
+              <Link to="/">
+                <h1 className="text-2xl font-bold">
+                  <span className="text-blue-600">San</span>Store
+                </h1>
+              </Link>
+            </div>
+
+            {/* DESKTOP NAV */}
+            <nav className="hidden lg:flex gap-8 font-medium">
+              <Link to="/">Home</Link>
+              <Link to="/shop">Shop</Link>
+              <Link to="/categories">Categories</Link>
+              <Link to="/contact">Contact</Link>
+            </nav>
+
+            {/* DESKTOP SEARCH */}
+            <div className="hidden sm:flex flex-1 max-w-md">
+              <div className="flex w-full bg-[#f1f5f9] rounded-full px-4 py-2 items-center">
+                <input
+                  value={query}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    if (e.target.value.trim() === "") {
+                      setResults([]);
+                      setShowResults(false);
+                    }
+                  }}
+                  placeholder="Search products..."
+                  className="bg-transparent outline-none flex-1"
+                />
+                <button onClick={handleSearch}>
+                  <FaSearch className="text-gray-600" />
+                </button>
+              </div>
+            </div>
+
+            {/* ICONS */}
+            <div className="flex items-center gap-4 text-xl">
+
+              {/* MOBILE SEARCH */}
+              <button
+                className="sm:hidden text-xl"
+                onClick={() => setMobileSearch(true)}
+              >
+                <FaSearch />
+              </button>
+
+              {/* WISHLIST */}
+              <Link to="/wishlist" className="relative">
+                <FaHeart />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
+
+              {/* CART */}
+              <Link to="/cart" className="relative">
+                <FaShoppingCart />
+                {totalCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs px-2 rounded-full">
+                    {totalCount}
+                  </span>
+                )}
+              </Link>
+
+              {/* USER */}
+              <div ref={menuRef} className="relative">
+
+                {user ? (
+                  <button
+                    onClick={() => setShowMenu(!showMenu)}
+                    className="flex items-center gap-2 text-sm font-semibold"
+                  >
+                    <FaUser />
+                    <span className="max-w-[90px] truncate">
+                      {user.name}
+                    </span>
+                  </button>
+                ) : (
+                  <Link to="/auth">
+                    <FaUser />
+                  </Link>
+                )}
+
+                {/* USER DROPDOWN */}
+                {user && showMenu && (
+                  <div className="absolute right-0 mt-3 w-64 bg-white shadow-xl rounded-xl z-50">
+                    <div className="p-4 border-b">
+                      <p className="font-bold">{user.name}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
+
+                    <Link className="block px-4 py-2 hover:bg-gray-100" to="/profile">
+                      Profile
+                    </Link>
+                    <Link className="block px-4 py-2 hover:bg-gray-100" to="/orders">
+                      Orders
+                    </Link>
+
+                    {user.role === "admin" && (
+                      <Link className="block px-4 py-2 text-blue-600" to="/admin">
+                        Admin Panel
+                      </Link>
+                    )}
+
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* HAMBURGER */}
+              <button
+                className="lg:hidden text-2xl"
+                onClick={() => setMobileMenu(true)}
+              >
+                <FaBars />
+              </button>
+            </div>
           </div>
 
-          {/* DESKTOP NAV */}
-          <nav className="hidden lg:flex gap-8 font-medium">
-            <Link to="/">Home</Link>
-            <Link to="/shop">Shop</Link>
-            <Link to="/categories">Categories</Link>
-            <Link to="/contact">Contact</Link>
-          </nav>
-
-          {/* SEARCH DESKTOP */}
-          <div className="hidden md:flex relative bg-[#f1f5f9] rounded-full px-4 py-2 items-center w-80">
-            <input
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                if (e.target.value.trim() === "") {
-                  setResults([]);
-                  setShowResults(false);
-                }
-              }}
-              placeholder="Search products..."
-              className="bg-transparent outline-none flex-1"
-            />
-
-            <button onClick={handleSearch}>
-              <FaSearch className="text-gray-600 hover:text-black" />
-            </button>
-
-            {/* RESULTS */}
-            {showResults && query.trim() !== "" && (
-              <div className="absolute top-full left-0 mt-2 w-full bg-white shadow-lg rounded-lg max-h-96 overflow-y-auto z-50">
+          {/* DESKTOP SEARCH RESULTS */}
+          {showResults && query.trim() !== "" && (
+            <div className="relative">
+              <div className="absolute left-0 right-0 bg-white shadow-lg rounded-lg max-h-96 overflow-y-auto z-50">
                 {loading && (
                   <div className="p-3 text-gray-500">Searching...</div>
                 )}
@@ -138,14 +234,10 @@ const Header = () => {
                       key={product._id}
                       to={`/product/${product._id}`}
                       className="flex items-center gap-3 p-3 hover:bg-gray-100"
-                      onClick={() => {
-                        setResults([]);
-                        setShowResults(false);
-                      }}
                     >
                       <img
                         src={product.images?.[0]}
-                        className="w-10 h-10 object-cover rounded"
+                        className="w-10 h-10 rounded"
                       />
                       <div>
                         <p className="text-sm font-medium">{product.name}</p>
@@ -156,116 +248,85 @@ const Header = () => {
                     </Link>
                   ))}
               </div>
-            )}
-          </div>
-
-          {/* ICONS */}
-          <div className="flex items-center gap-5 text-xl">
-            {/* MOBILE SEARCH */}
-            <button
-              className="md:hidden"
-              onClick={() => setShowSearch(!showSearch)}
-            >
-              <FaSearch />
-            </button>
-
-            {/* WISHLIST */}
-            <Link to="/wishlist" className="relative">
-              <FaHeart />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
-
-            {/* CART */}
-            <Link to="/cart" className="relative">
-              <FaShoppingCart />
-              {totalCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs px-2 rounded-full">
-                  {totalCount}
-                </span>
-              )}
-            </Link>
-
-            {/* USER */}
-            <div ref={menuRef} className="relative">
-              {user ? (
-                <button
-                  onClick={() => setShowMenu(!showMenu)}
-                  className="flex items-center gap-2 text-sm font-semibold"
-                >
-                  <FaUser />
-                  <span className="max-w-[100px] truncate">{user.name}</span>
-                </button>
-              ) : (
-                <Link to="/auth">
-                  <FaUser />
-                </Link>
-              )}
-
-              {/* DROPDOWN */}
-              {user && showMenu && (
-                <div className="absolute right-0 mt-3 w-64 bg-white shadow-xl rounded-xl z-50">
-                  <div className="p-4 border-b">
-                    <p className="font-bold">{user.name}</p>
-                    <p className="text-xs text-gray-500">{user.email}</p>
-                  </div>
-
-                  <Link
-                    className="block px-4 py-2 hover:bg-gray-100"
-                    to="/profile"
-                  >
-                    Profile
-                  </Link>
-                  <Link
-                    className="block px-4 py-2 hover:bg-gray-100"
-                    to="/orders"
-                  >
-                    Orders
-                  </Link>
-
-                  {user.role === "admin" && (
-                    <Link className="block px-4 py-2 text-blue-600" to="/admin">
-                      Admin Panel
-                    </Link>
-                  )}
-
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
             </div>
+          )}
 
-            {/* MOBILE MENU */}
-            <button className="lg:hidden" onClick={() => setMobileMenu(true)}>
-              <FaBars />
-            </button>
-          </div>
         </div>
+      </header>
 
-        {/* MOBILE SEARCH */}
-        {showSearch && (
-          <div className="md:hidden px-4 pb-3">
-            <div className="flex bg-gray-100 rounded-full px-4 py-2">
+      {/* MOBILE SEARCH OVERLAY */}
+      {mobileSearch && (
+        <div className="fixed inset-0 z-[999] bg-black/40">
+
+          <div className="bg-white p-4">
+            <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-full">
               <input
+                autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="flex-1 bg-transparent outline-none"
                 placeholder="Search products..."
+                className="flex-1 bg-transparent outline-none"
               />
+
               <button onClick={handleSearch}>
                 <FaSearch />
               </button>
+
+              <button onClick={() => setMobileSearch(false)}>
+                <FaTimes />
+              </button>
             </div>
           </div>
-        )}
-      </header>
+
+          <div className="bg-white max-h-[80vh] overflow-y-auto">
+            {loading && (
+              <div className="p-3 text-gray-500">Searching...</div>
+            )}
+
+            {!loading &&
+              results.map((product) => (
+                <Link
+                  key={product._id}
+                  to={`/product/${product._id}`}
+                  onClick={() => setMobileSearch(false)}
+                  className="flex items-center gap-3 p-3 hover:bg-gray-100"
+                >
+                  <img
+                    src={product.images?.[0]}
+                    className="w-10 h-10 rounded"
+                  />
+                  <div>
+                    <p className="text-sm font-medium">{product.name}</p>
+                    <p className="text-xs text-gray-500">
+                      ₹{product.price}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* MOBILE MENU */}
+      {mobileMenu && (
+        <div className="fixed inset-0 z-[999] bg-black/50">
+          <div className="w-72 h-full bg-white p-5">
+            <div className="flex justify-between mb-6">
+              <h2 className="font-bold">Menu</h2>
+              <button onClick={() => setMobileMenu(false)}>
+                <FaTimes />
+              </button>
+            </div>
+
+            <nav className="flex flex-col gap-4">
+              <Link onClick={() => setMobileMenu(false)} to="/">Home</Link>
+              <Link onClick={() => setMobileMenu(false)} to="/shop">Shop</Link>
+              <Link onClick={() => setMobileMenu(false)} to="/categories">Categories</Link>
+              <Link onClick={() => setMobileMenu(false)} to="/contact">Contact</Link>
+            </nav>
+          </div>
+        </div>
+      )}
     </>
   );
 };
