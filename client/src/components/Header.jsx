@@ -19,8 +19,8 @@ const Header = () => {
   const navigate = useNavigate();
   const { cartItems } = useCart();
   const { wishlistItems } = useWishlist();
-
   const { user, logout } = useAuth();
+
   const [showMenu, setShowMenu] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -39,6 +39,7 @@ const Header = () => {
     0,
   );
 
+  // close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -55,9 +56,8 @@ const Header = () => {
     navigate("/", { replace: true });
   };
 
-  // ✅ SEARCH ONLY ON BUTTON CLICK
   const handleSearch = async (e) => {
-    if (e) e.preventDefault(); // agar button form ke andar hai to page reload na ho
+    if (e) e.preventDefault();
     if (!query.trim()) return;
 
     try {
@@ -75,16 +75,16 @@ const Header = () => {
 
   return (
     <>
-      {/* Top Bar */}
+      {/* TOP BAR */}
       <div className="bg-[#071d36] text-white text-sm py-2 px-5 flex justify-between">
         <p>Welcome to SanStore</p>
         <p>24/7 Support | +91 8146774370</p>
       </div>
 
       {/* HEADER */}
-      <header className="bg-white sticky top-0 z-50 shadow-lg overflow-visible">
+      <header className="bg-white sticky top-0 z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
-          {/* Logo */}
+          {/* LOGO */}
           <div className="flex items-center gap-2">
             <img src="/logo/logo.png" className="w-10 h-10" />
             <Link to="/">
@@ -94,7 +94,7 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* Desktop Menu */}
+          {/* DESKTOP NAV */}
           <nav className="hidden lg:flex gap-8 font-medium">
             <Link to="/">Home</Link>
             <Link to="/shop">Shop</Link>
@@ -102,14 +102,12 @@ const Header = () => {
             <Link to="/contact">Contact</Link>
           </nav>
 
-          {/* SEARCH WRAPPER (IMPORTANT FIX) */}
+          {/* SEARCH DESKTOP */}
           <div className="hidden md:flex relative bg-[#f1f5f9] rounded-full px-4 py-2 items-center w-80">
             <input
-              type="text"
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);
-
                 if (e.target.value.trim() === "") {
                   setResults([]);
                   setShowResults(false);
@@ -119,29 +117,22 @@ const Header = () => {
               className="bg-transparent outline-none flex-1"
             />
 
-            <button
-              onClick={handleSearch}
-              className="ml-2 text-gray-600 hover:text-black"
-            >
-              <FaSearch />
+            <button onClick={handleSearch}>
+              <FaSearch className="text-gray-600 hover:text-black" />
             </button>
 
-            {/* SEARCH DROPDOWN FIXED POSITION */}
+            {/* RESULTS */}
             {showResults && query.trim() !== "" && (
               <div className="absolute top-full left-0 mt-2 w-full bg-white shadow-lg rounded-lg max-h-96 overflow-y-auto z-50">
-                {/* LOADING */}
                 {loading && (
                   <div className="p-3 text-gray-500">Searching...</div>
                 )}
 
-                {/* NO RESULTS */}
                 {!loading && results.length === 0 && (
                   <div className="p-3 text-gray-500">No products found</div>
                 )}
 
-                {/* RESULTS */}
                 {!loading &&
-                  results.length > 0 &&
                   results.map((product) => (
                     <Link
                       key={product._id}
@@ -153,7 +144,7 @@ const Header = () => {
                       }}
                     >
                       <img
-                        src={product.images?.[0] || product.image}
+                        src={product.images?.[0]}
                         className="w-10 h-10 object-cover rounded"
                       />
                       <div>
@@ -169,8 +160,8 @@ const Header = () => {
           </div>
 
           {/* ICONS */}
-          <div className="flex items-center gap-4 text-xl">
-            {/* Mobile Search Toggle */}
+          <div className="flex items-center gap-5 text-xl">
+            {/* MOBILE SEARCH */}
             <button
               className="md:hidden"
               onClick={() => setShowSearch(!showSearch)}
@@ -178,7 +169,7 @@ const Header = () => {
               <FaSearch />
             </button>
 
-            {/* Wishlist */}
+            {/* WISHLIST */}
             <Link to="/wishlist" className="relative">
               <FaHeart />
               {wishlistCount > 0 && (
@@ -188,7 +179,7 @@ const Header = () => {
               )}
             </Link>
 
-            {/* Cart */}
+            {/* CART */}
             <Link to="/cart" className="relative">
               <FaShoppingCart />
               {totalCount > 0 && (
@@ -198,14 +189,15 @@ const Header = () => {
               )}
             </Link>
 
-            {/* User */}
+            {/* USER */}
             <div ref={menuRef} className="relative">
               {user ? (
                 <button
                   onClick={() => setShowMenu(!showMenu)}
-                  className="hidden sm:block text-sm font-semibold"
+                  className="flex items-center gap-2 text-sm font-semibold"
                 >
-                  {user.name}
+                  <FaUser />
+                  <span className="max-w-[100px] truncate">{user.name}</span>
                 </button>
               ) : (
                 <Link to="/auth">
@@ -213,7 +205,7 @@ const Header = () => {
                 </Link>
               )}
 
-              {/* USER DROPDOWN */}
+              {/* DROPDOWN */}
               {user && showMenu && (
                 <div className="absolute right-0 mt-3 w-64 bg-white shadow-xl rounded-xl z-50">
                   <div className="p-4 border-b">
@@ -233,12 +225,6 @@ const Header = () => {
                   >
                     Orders
                   </Link>
-                  <Link
-                    className="block px-4 py-2 hover:bg-gray-100"
-                    to="/cart"
-                  >
-                    Cart
-                  </Link>
 
                   {user.role === "admin" && (
                     <Link className="block px-4 py-2 text-blue-600" to="/admin">
@@ -256,7 +242,7 @@ const Header = () => {
               )}
             </div>
 
-            {/* HAMBURGER */}
+            {/* MOBILE MENU */}
             <button className="lg:hidden" onClick={() => setMobileMenu(true)}>
               <FaBars />
             </button>
@@ -265,94 +251,21 @@ const Header = () => {
 
         {/* MOBILE SEARCH */}
         {showSearch && (
-          <div className="md:hidden px-4 pb-3 relative">
+          <div className="md:hidden px-4 pb-3">
             <div className="flex bg-gray-100 rounded-full px-4 py-2">
               <input
-                type="text"
                 value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  if (e.target.value.trim() === "") {
-                    setResults([]);
-                    setShowResults(false);
-                  }
-                }}
-                placeholder="Search products..."
+                onChange={(e) => setQuery(e.target.value)}
                 className="flex-1 bg-transparent outline-none"
+                placeholder="Search products..."
               />
               <button onClick={handleSearch}>
                 <FaSearch />
               </button>
             </div>
-
-            {/* SEARCH DROPDOWN */}
-            {showResults && query.trim() !== "" && (
-              <div className="absolute top-full left-0 mt-2 w-full bg-white shadow-lg rounded-lg max-h-96 overflow-y-auto z-50">
-                {loading && (
-                  <div className="p-3 text-gray-500">Searching...</div>
-                )}
-                {!loading && results.length === 0 && (
-                  <div className="p-3 text-gray-500">No products found</div>
-                )}
-                {!loading &&
-                  results.length > 0 &&
-                  results.map((product) => (
-                    <Link
-                      key={product._id}
-                      to={`/product/${product._id}`}
-                      className="flex items-center gap-3 p-3 hover:bg-gray-100"
-                      onClick={() => {
-                        setResults([]);
-                        setShowResults(false);
-                        setShowSearch(false); // close mobile search after selecting
-                      }}
-                    >
-                      <img
-                        src={product.images?.[0] || product.image}
-                        className="w-10 h-10 object-cover rounded"
-                      />
-                      <div>
-                        <p className="text-sm font-medium">{product.name}</p>
-                        <p className="text-xs text-gray-500">
-                          ₹{product.price}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-              </div>
-            )}
           </div>
         )}
       </header>
-
-      {/* MOBILE MENU */}
-      {mobileMenu && (
-        <div className="fixed inset-0 bg-black/50 z-50">
-          <div className="w-72 h-full bg-white p-5">
-            <div className="flex justify-between mb-6">
-              <h2 className="font-bold text-lg">Menu</h2>
-              <button onClick={() => setMobileMenu(false)}>
-                <FaTimes />
-              </button>
-            </div>
-
-            <nav className="flex flex-col gap-4">
-              <Link onClick={() => setMobileMenu(false)} to="/">
-                Home
-              </Link>
-              <Link onClick={() => setMobileMenu(false)} to="/shop">
-                Shop
-              </Link>
-              <Link onClick={() => setMobileMenu(false)} to="/categories">
-                Categories
-              </Link>
-              <Link onClick={() => setMobileMenu(false)} to="/contact">
-                Contact
-              </Link>
-            </nav>
-          </div>
-        </div>
-      )}
     </>
   );
 };
